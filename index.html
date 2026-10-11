@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ku" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preload" href="/brand/unique-logo.svg" as="image" type="image/svg+xml" />
+  <style>
+    body.is-loading, body.is-docking { overflow: hidden; }
+    .startup-loader { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; isolation: isolate; pointer-events: auto; }
+    
+    /* Architectural Packaging / Cabinet Shutters */
+    .startup-shutter {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 50vh;
+      background: #faf8f5;
+      z-index: 1;
+      will-change: transform;
+      transform: translateZ(0);
+      transition: transform 1150ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .startup-shutter-top {
+      top: 0;
+      transform-origin: top center;
+    }
+    .startup-shutter-bottom {
+      bottom: 0;
+      transform-origin: bottom center;
+    }
+    .startup-crease {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 5%, rgba(140, 115, 85, 0.15) 25%, rgba(255, 102, 0, 0.3) 50%, rgba(140, 115, 85, 0.15) 75%, transparent 95%);
+      z-index: 0;
+      transform: translateY(-50%);
+      transition: opacity 350ms ease;
+      pointer-events: none;
+    }
+
+    .startup-loader.is-docking .startup-shutter-top {
+      transform: translateY(-100%);
+    }
+    .startup-loader.is-docking .startup-shutter-bottom {
+      transform: translateY(100%);
+    }
+    .startup-loader.is-docking .startup-crease {
+      opacity: 0;
+    }
+
+    body.is-docking .header-logo-link,
+    body:has(.startup-loader.is-docking) .header-logo-link {
+      visibility: hidden;
+    }
+    .startup-loader.is-leaving {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 500ms ease;
+    }
+    .startup-loader-inner {
+      display: grid;
+      place-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Minimalist Packaging Frame around Logo */
+    .startup-pack-box {
+      position: relative;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .startup-pack-box::before,
+    .startup-pack-box::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-color: rgba(255, 102, 0, 0.35);
+      border-style: solid;
+      pointer-events: none;
+      will-change: transform, opacity;
+      transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 350ms ease;
+    }
+    .startup-pack-box::before {
+      top: 0;
+      left: 0;
+      border-width: 1.5px 0 0 1.5px;
+    }
+    .startup-pack-box::after {
+      bottom: 0;
+      right: 0;
+      border-width: 0 1.5px 1.5px 0;
+    }
+    .startup-loader.is-packing .startup-pack-box::before,
+    .startup-loader.is-docking .startup-pack-box::before {
+      transform: translate(-10px, -10px) scale(0.6);
+      opacity: 0;
+    }
+    .startup-loader.is-packing .startup-pack-box::after,
+    .startup-loader.is-docking .startup-pack-box::after {
+      transform: translate(10px, 10px) scale(0.6);
+      opacity: 0;
+    }
+
+    /* High-Performance GPU Composited Logo System */
+    .startup-logo {
+      position: relative;
+      width: clamp(170px, 24vw, 240px);
+      aspect-ratio: 4072.9774 / 1288.0952;
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      animation: logo-full-arrive 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    @keyframes logo-full-arrive {
+      0% {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .startup-symbol-layer,
+    .startup-text-mask,
+    .startup-text-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .startup-symbol-layer {
+      z-index: 2;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+    }
+
+    .startup-text-mask {
+      z-index: 1;
+      overflow: hidden;
+      clip-path: inset(0 0 0 25.6%);
+    }
+    .startup-text-layer {
+      will-change: transform, opacity;
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+
+    /* 1. Text slides smoothly into the 'U' emblem in the center */
+    .startup-loader.is-packing .startup-text-layer,
+    .startup-loader.is-docking .startup-text-layer {
+      animation: text-into-u 480ms cubic-bezier(0.32, 0, 0.2, 1) forwards;
+    }
+    @keyframes text-into-u {
+      0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(-28%, 0, 0);
+      }
+    }
+
+    /* 2. At the top header, text emerges smoothly out of the 'U' */
+    .startup-loader.is-docking.is-settling .startup-text-layer,
+    .startup-loader.is-settling .startup-text-layer {
+      animation: text-out-of-u 480ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes text-out-of-u {
+      0% {
+        opacity: 0;
+        transform: translate3d(-28%, 0, 0);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    .startup-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .startup-shutter, .startup-pack-box::before, .startup-pack-box::after,
+      .startup-symbol-layer, .startup-text-layer {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+      }
+    }
+  </style>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  
+  <!-- Preload Critical Above-The-Fold Assets for Instant Response During Animation -->
+  <link rel="preload" as="image" href="/hero_interior.jpg" fetchpriority="high" />
+  <link rel="preload" as="image" href="/brand/unique-logo.svg" />
+  <link rel="preload" as="image" href="/brand/unique-symbol.svg" />
+  <link rel="preload" as="image" href="/images/sofa_cloud_sectional.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Zain:ital,wght@0,200;0,300;0,400;0,700;0,800;0,900;1,300;1,400&display=swap"
+    rel="stylesheet">
+  <meta name="description"
+    content="Unique Furniture — Premium digital furniture showroom in Sulaymaniyah, Kurdistan Region, Iraq. Bespoke home and office furniture crafted with honest materials." />
+  <meta name="keywords"
+    content="Unique Furniture, Furniture Sulaymaniyah, Furniture Slemani, Furniture Kurdistan, Home Furniture Sulaymaniyah, Office Furniture Sulaymaniyah" />
+  <meta property="og:title" content="Unique furniture" />
+  <meta property="og:description"
+    content="Bespoke Home & Office Furniture in Sulaymaniyah, Kurdistan Region, Iraq. Experience our curated showroom collection." />
+  <meta property="og:type" content="website" />
+  <title>Unique furniture</title>
+</head>
+
+<body class="is-loading">
+  <div id="startup-loader" class="startup-loader" role="status" aria-label="Loading Unique Furniture">
+    <div class="startup-shutter startup-shutter-top"></div>
+    <div class="startup-shutter startup-shutter-bottom"></div>
+    <div class="startup-crease"></div>
+    <div class="startup-loader-inner">
+      <div class="startup-pack-box">
+        <div id="startup-logo" class="startup-logo" role="img" aria-label="Unique Furniture">
+          <div class="startup-symbol-layer">
+            <svg class="startup-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4072.9774 1288.0952" aria-hidden="true">
+              <path transform="matrix(1,0,0,-1,0,1288.0952)" d="M803.5123 905.5054V917.18338C803.5123 1044.1284 907.2523 1147.6663 1034.4473 1147.6663H1048.5044V905.5054H803.5123Z" fill="#050505" fill-rule="evenodd"/>
+              <path transform="matrix(1,0,0,-1,0,1288.0952)" d="M12 1147.666H26.05701C153.251 1147.666 256.99205 1044.1289 256.99205 917.1841V660.9929C256.99205 336.312 803.5121 336.35597 803.5121 660.9929V672.749H1048.504V660.9929C1048.504 12 12 12.04395 12 660.9929V1147.666Z" fill="#ff6600" fill-rule="evenodd"/>
+              <path transform="matrix(1,0,0,-1,0,1288.0952)" d="M536.1398 672.7495H781.1318V905.5054H536.1398Z" fill="#050505"/>
+              <path transform="matrix(1,0,0,-1,0,1288.0952)" d="M12 1147.666C158.78598 1108.4121 160.40799 970.5371 160.40799 929.6101V660.9929C160.40799 367.58399 372.298 206.85205 604.468 178.7561 323.12998 144.71094 12 305.4441 12 660.9929V1147.666Z" fill="#ff0000" fill-rule="evenodd"/>
+            </svg>
+          </div>
+          <div class="startup-text-mask">
+            <div class="startup-text-layer">
+              <svg class="startup-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4072.9774 1288.0952" aria-hidden="true">
+                <path transform="matrix(1,0,0,-1,0,1288.0952)" d="M1161.575 174.90869V826.15676C1161.575 977.7717 1285.867 1101.8208 1437.7799 1101.8208H1460.1589C1612.072 1101.8208 1736.364 977.77078 1736.364 826.15676V418.2456H1647.5399C1606.7759 418.2456 1573.528 451.42774 1573.528 492.1128V843.20266C1573.528 905.1118 1522.19 956.34866 1460.1589 956.34866H1437.7799C1375.7479 956.34866 1324.4109 905.1118 1324.4109 843.20266V248.77564C1324.4109 208.0918 1291.163 174.90869 1250.398 174.90869H1161.575Z" fill="#050505" fill-rule="evenodd"/>
+                <path transform="matrix(1,0,0,-1,0,1288.0952)" d="M1820.134 421.77223V1088.0093H1908.957C1949.7219 1088.0093 1982.969 1054.8262 1982.969 1014.1421V421.77223H1820.134Z" fill="#050505" fill-rule="evenodd"/>
+                <path transform="matrix(1,0,0,-1,0,1288.0952)" d="M1820.134 1157.6592V1276.0952H1908.957C1949.7219 1276.0952 1982.969 1242.9121 1982.969 1202.2283V1157.6592H1820.134Z" fill="#ff6600" fill-rule="evenodd"/>
+                <path transform="matrix(1,0,0,-1,0,1288.0952)" d="M2079.6339 802.647C2083.8367 965.522 2213.202 1098.883 2376.4508 1098.883H2421.6519C2577.973 1098.883 2707.0579 976.647 2717.7359 823.22H2718.4688V802.647 156.98291H2629.6458C2588.8819 156.98291 2555.6339 190.16602 2555.6339 230.8501V498.47096C2499.0579 443.68507 2430.9178 405.15187 2356.389 407.7749 2207.473 413.01808 2071.8858 502.4099 2079.6339 802.647M2406.4849 955.46609V955.46609C2488.5169 955.46609 2555.6339 888.48098 2555.6339 806.6089V704.6399C2555.6339 622.76907 2488.5169 555.78298 2406.4849 555.78298 2324.453 555.78298 2257.3358 622.76907 2257.3358 704.6399V806.6089C2257.3358 888.48098 2324.453 955.46609 2406.4849 955.46609Z" fill="#050505" fill-rule="evenodd"/>
+                <path transform="matrix(1,0,0,-1,0,1288.0952)" d="M3371.2125 1087.7141V678.6272C3371.2125 527.0122 3246.9205 402.96315 3095.0074 402.96315H3072.6285C2920.7154 402.96315 2796.4234 527.0132 2796.4234 678.6272V959.58206 1086.5381H2959.2596V661.58108C2959.2596 599.6721 3010.5975 548.43508 3072.6285 548.43508H3095.0074C3157.0394 548.43508 3208.3765 599.6721 3208.3765 661.58108V1013.84719C3208.3765 1054.531 3241.6246 1087.7141 3282.3895 1087.7141H3371.2125Z" fill="#050505" fill-rule="evenodd"/>
+                <path transform="matrix(1,0,0,-1,0,1288.0952)" d="M3778.3343 403.55299H3728.7843C3573.3304 403.55299 3446.1414 530.49197 3446.1414 685.6421V819.7339C3446.1414 974.88308 3573.3304 1101.822 3728.7843 1101.822H3778.3343C3933.7884 1101.822 4060.9774 974.88308 4060.9774 819.7339V709.1929H3917.279 3889.0125 3618.1063V677.4541C3618.1063 603.1011 3679.0604 542.2671 3753.5594 542.2671 3808.1375 542.2671 3855.4422 574.91897 3876.84 621.615H4053.5784C4024.3255 497.04103 3911.7406 403.55299 3778.3343 403.55299M3888.9974 829.0969C3888.3572 902.91409 3827.6644 963.1089 3753.5594 963.1089 3679.4532 963.1089 3618.7613 902.91409 3618.1214 829.0969H3888.9974Z" fill="#050505" fill-rule="evenodd"/>
+                <path transform="matrix(1,0,0,-1,0,1288.0952)" d="M2845.6373 80.49512V323.62403H2996.7003V295.10108H2875.349V219.3772H2980.4373V190.854H2875.349V80.49512H2845.6373M3137.7032 80.49512V106.698C3125.0882 86.72021 3107.9913 76.76001 3086.3582 76.76001 3076.819 76.76001 3067.9053 78.74121 3059.6173 82.70215 3051.329 86.72021 3045.1783 91.70117 3041.1654 97.7002 3037.1512 103.75513 3034.3363 111.11206 3032.7203 119.82812 3031.6263 125.71411 3031.0523 134.99512 3031.0523 147.67212V256.73023H3058.5753V159.21802C3058.5753 143.65406 3059.1483 133.12818 3060.2432 127.75122 3061.9632 119.88501 3065.6124 113.77222 3071.2423 109.302 3076.819 104.83105 3083.7003 102.56714 3091.9364 102.56714 3100.172 102.56714 3107.8873 104.83105 3115.0804 109.41504 3122.2742 113.99902 3127.382 120.28101 3130.4063 128.14722 3133.3773 136.01416 3134.8892 147.50318 3134.8892 162.5V256.73023H3162.4112V80.49512H3137.7032M3205.3123 80.49512V256.73023H3230.0203V229.73413C3236.3272 242.24219 3242.1654 250.50415 3247.5343 254.46607 3252.903 258.48414 3258.7933 260.4651 3265.2054 260.4651 3274.4842 260.4651 3283.9193 257.29615 3293.5103 251.01416L3283.7103 223.45215C3277.0384 227.5271 3270.3663 229.56421 3263.693 229.56421 3257.6993 229.56421 3252.3304 227.58423 3247.5863 223.6792 3242.8433 219.77417 3239.4554 214.34107 3237.422 207.38013 3234.3463 196.79615 3232.8353 185.19507 3232.8353 172.57422V80.49512H3205.3123M3309.7742 80.49512V256.73023H3334.4822V231.71509C3346.3673 250.90015 3363.568 260.4651 3386.0352 260.4651 3395.8353 260.4651 3404.8013 258.54103 3412.985 254.74903 3421.1693 250.95703 3427.32 245.92017 3431.3863 239.75122 3435.4512 233.58203 3438.318 226.2251 3439.9344 217.73609 3440.924 212.19019 3441.4464 202.51319 3441.4464 188.70313V80.49512H3413.923V187.57202C3413.923 199.73902 3412.8802 208.85108 3410.7432 214.8501 3408.6063 220.84912 3404.8013 225.65918 3399.3792 229.281 3393.9593 232.84717 3387.547 234.6582 3380.2493 234.6582 3368.5733 234.6582 3358.5123 230.64014 3350.0152 222.54712 3341.5194 214.51001 3337.297 199.1731 3337.297 176.64917V80.49512H3309.7742M3483.7213 289.667H3511.2442V323.62403H3483.7213ZM3483.7213 80.49512H3511.2442V256.73023H3483.7213ZM3612.943 107.15112 3616.6964 80.77808C3608.9813 79.02417 3602.049 78.11816 3596.0023 78.11816 3586.0462 78.11816 3578.3314 79.81616 3572.8052 83.26807 3567.3323 86.72021 3563.4754 91.19116 3561.2332 96.79419 3558.9923 102.39722 3557.8973 114.16919 3557.8973 132.10913V233.63916H3537.5672V256.73023H3557.8973V300.30714L3585.4202 318.24806V256.73023H3612.943V233.63916H3585.4202V130.41114C3585.4202 121.86523 3585.8892 116.37622 3586.8802 113.94214 3587.818 111.50903 3589.382 109.58521 3591.5714 108.11304 3593.7603 106.698 3596.8883 105.96216 3600.9544 105.96216 3603.9774 105.96216 3607.9913 106.35913 3612.943 107.15112M3746.1273 80.49512V106.698C3733.5123 86.72021 3716.4154 76.76001 3694.7823 76.76001 3685.2432 76.76001 3676.3294 78.74121 3668.0413 82.70215 3659.7532 86.72021 3653.6024 91.70117 3649.5882 97.7002 3645.5743 103.75513 3642.7603 111.11206 3641.1444 119.82812 3640.049 125.71411 3639.4754 134.99512 3639.4754 147.67212V256.73023H3666.9993V159.21802C3666.9993 143.65406 3667.5723 133.12818 3668.6673 127.75122 3670.3873 119.88501 3674.0362 113.77222 3679.6663 109.302 3685.2432 104.83105 3692.1243 102.56714 3700.36 102.56714 3708.5953 102.56714 3716.3114 104.83105 3723.5042 109.41504 3730.6973 113.99902 3735.8062 120.28101 3738.8294 128.14722 3741.8013 136.01416 3743.3123 147.50318 3743.3123 162.5V256.73023H3770.8353V80.49512H3746.1273M3813.735 80.49512V256.73023H3838.443V229.73413C3844.7513 242.24219 3850.589 250.50415 3855.9583 254.46607 3861.3275 258.48414 3867.217 260.4651 3873.6292 260.4651 3882.9075 260.4651 3892.342 257.29615 3901.9344 251.01416L3892.134 223.45215C3885.4622 227.5271 3878.7904 229.56421 3872.1175 229.56421 3866.1234 229.56421 3860.7542 227.58423 3856.01 223.6792 3851.2674 219.77417 3847.8782 214.34107 3845.845 207.38013 3842.7703 196.79615 3841.258 185.19507 3841.258 172.57422V80.49512H3813.735M4028.9154 137.54224 4057.3763 133.46704C4052.945 115.5271 4044.6575 101.5481 4032.5643 91.64404 4020.47 81.74023 4005.0413 76.76001 3986.2235 76.76001 3962.5574 76.76001 3943.7923 84.68311 3929.926 100.52905 3916.0604 116.31909 3909.1273 138.56104 3909.1273 167.14112 3909.1273 196.6831 3916.112 219.66016 3930.134 235.95923 3944.1566 252.31519 3962.3494 260.4651 3984.7113 260.4651 4006.343 260.4651 4024.014 252.4851 4037.7244 236.46924 4051.4334 220.45313 4058.3143 197.92823 4058.3143 168.89502 4058.3143 167.14112 4058.262 164.4812 4058.1585 160.97217H3937.2762C3938.318 141.6731 3943.3226 126.84619 3952.3924 116.60205 3961.4105 106.35913 3972.722 101.20801 3986.2235 101.20801 3996.2835 101.20801 4004.884 104.09521 4011.9735 109.86719 4019.1156 115.64014 4024.7445 124.86523 4028.9154 137.54224M3938.839 185.42115H4029.2283C4028.029 200.24805 4024.5364 211.34107 4018.8543 218.75513 4010.1492 230.24414 3998.7855 236.01612 3984.8675 236.01612 3972.2523 236.01612 3961.6712 231.43213 3953.07 222.26416 3944.5223 213.09522 3939.778 200.81421 3938.839 185.42115Z" fill="#ff6600"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="root" inert></div>
+  <script>
+    // Never leave the page blocked if a resource or the application fails to load.
+    setTimeout(() => {
+      if (!document.getElementById('startup-loader')) return;
+      document.getElementById('startup-loader').remove();
+      document.getElementById('root').removeAttribute('inert');
+      document.body.classList.remove('is-loading', 'is-docking');
+      window.dispatchEvent(new Event('site-ready'));
+    }, 8000);
+  </script>
+  <noscript><style>.startup-loader { display: none; } body.is-loading { overflow: auto; }</style>Please enable JavaScript to explore Unique Furniture.</noscript>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>
