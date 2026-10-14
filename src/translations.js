@@ -191,13 +191,13 @@ export const translations = {
 
     aboutPage: {
       badge: 'ناسنامە و ڕەسەنایەتی',
-      heroTitle: 'تێکەڵکردنی ئەندازیاری هاوچەرخ و جوانی هەمیشەیی کەرەستە',
+      heroTitle: 'تێکەڵکردنی ئەندازیاری هاوچەرخ لەگەڵ جوانی هەمیشەیی کەرەستە',
       heroSubtitle: 'لە یۆنیک مۆبیلیات، ئێمە باوەڕمان بە مۆبیلیاتی کاتی و بەکارهێنانی خێرا نییە. هەموو پارچەیەک بە ڕۆحێکی هێمن، لە داری سروشتی، مەڕمەڕی ڕەسەن و قوماشی تایبەت دروست دەکرێت تا ساڵانێکی درێژ ئارامی و جوانی ببەخشێتە ماڵ و شوێنی کارەکەت لە سلێمانی و تەواوی کوردستان.',
       stats: [
         {
-          value: '+10',
-          label: 'ساڵ ئەزموونی پسپۆڕی',
-          desc: 'پێشەنگ لە دابینکردنی مۆبیلیاتی ئاستبەرز لە سلێمانی'
+          value: '1978',
+          label: 'ساڵی دەستپێک و دامەزراندن',
+          desc: 'زیاتر لە ٤٥ ساڵ ئەزموونی پسپۆڕی لە دابینکردنی مۆبیلیات لە سلێمانی'
         },
         {
           value: '+1,200',
@@ -206,13 +206,13 @@ export const translations = {
         },
         {
           value: '100%',
-          label: 'کەرەستەی ئەسڵی و سروشتی',
-          desc: 'داری گوێزی ئەمریکی، بەردی تراڤێرتین و داربەڕوو'
+          label: 'داری زانی ڕۆمانی و کەرەستەی ئەسڵی',
+          desc: 'داری زانی ڕۆمانی، بەردی سروشتی و قوماشی کوالێتی بەرز'
         },
         {
-          value: '5',
-          label: 'ساڵ گرەنتی بنەڕەتی',
-          desc: 'متمانەی تەواو بە بەستن و پتەوی هەر مۆدێلێک'
+          value: '3',
+          label: 'ساڵ گرەنتی مسۆگەر',
+          desc: 'متمانەی تەواو بە بەستن، پتەوی و کوالێتی هەر مۆدێلێک'
         }
       ],
       curationQuote: {
@@ -483,9 +483,9 @@ export const translations = {
       heroSubtitle: 'في يونيك للموبيليا، لا نؤمن بالأثاث الاستهلاكي السريع. كل قطعة نصنعها ونستوردها تُبنى بروح متزنة من خشب الجوز الصلب، الرخام الطبيعي والأقمشة الفاخرة لتمنح منزلك ومكتبك في السليمانية وكوردستان سكينة وفخامة تدوم لعقود.',
       stats: [
         {
-          value: '+10',
-          label: 'سنوات من الخبرة المتخصصة',
-          desc: 'رواد في تأثيث المساحات والمقرات الفاخرة بالسليمانية'
+          value: '1978',
+          label: 'سنة التأسيس والريادة',
+          desc: 'أكثر من 45 عاماً من الخبرة الأصيلة في صناعة وتوريد الأثاث بالسليمانية'
         },
         {
           value: '+1,200',
@@ -494,12 +494,12 @@ export const translations = {
         },
         {
           value: '100%',
-          label: 'خامات طبيعية صلبة وأصيلة',
-          desc: 'خشب الجوز الأمريكي، الرخام الطبيعي وحجر الترافرتين'
+          label: 'خشب الزان الروماني وخامات أصلية',
+          desc: 'خشب الزان الروماني، الرخام الطبيعي والأقمشة الفاخرة'
         },
         {
-          value: '5',
-          label: 'سنوات ضمان للهيكل والمتانة',
+          value: '3',
+          label: 'سنوات ضمان حقيقي',
           desc: 'ثقة مطلقة في متانة الهياكل ودقة التعشيق والتشطيب'
         }
       ],
@@ -771,9 +771,9 @@ export const translations = {
       heroSubtitle: 'At Unique Furniture, we reject the cycle of fast, disposable furniture. Every piece in our collection is curated and crafted from genuine solid hardwoods, Italian travertine, and high-performance textiles — designed to bring quiet elegance and lasting architectural presence to homes and executive offices across Kurdistan.',
       stats: [
         {
-          value: '+10',
-          label: 'Years of Dedicated Craft',
-          desc: 'Leading bespoke interior and executive furnishing in Sulaymaniyah'
+          value: '1978',
+          label: 'Established in Sulaymaniyah',
+          desc: 'Over 45 years of continuous mastery and furniture heritage in Kurdistan'
         },
         {
           value: '+1,200',
@@ -782,12 +782,12 @@ export const translations = {
         },
         {
           value: '100%',
-          label: 'Authentic Natural Materials',
-          desc: 'Solid American walnut, honed travertine & white oak'
+          label: 'Roman Beech Wood & Natural Elements',
+          desc: 'Solid Roman beech wood, natural marble & high-grade textiles'
         },
         {
-          value: '5',
-          label: 'Years Structural Guarantee',
+          value: '3',
+          label: 'Years Comprehensive Warranty',
           desc: 'Enduring confidence in frame construction and precision joinery'
         }
       ],

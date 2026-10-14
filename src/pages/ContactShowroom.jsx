@@ -48,7 +48,7 @@ const ContactShowroom = () => {
             {t.nav.home}
           </span>
           <span style={{ color: 'var(--text-muted)' }}>/</span>
-          <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{t.nav.showroom}</span>
+          <span style={{ color: 'var(--text-primary)', fontWeight: 'normal' }}>{t.nav.showroom}</span>
         </div>
 
         {/* Page Title — Clean typography, no decorative badge chip */}
@@ -57,7 +57,7 @@ const ContactShowroom = () => {
             style={{
               display: 'block',
               fontSize: '0.82rem',
-              fontWeight: 700,
+              fontWeight: 'normal',
               color: 'var(--brand-orange)',
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
@@ -66,7 +66,7 @@ const ContactShowroom = () => {
           >
             {lang === 'ku' ? 'سلێمانی · پێشانگای فەرمی' : lang === 'ar' ? 'السليمانية · صالة العرض الرئيسية' : 'Sulaymaniyah Flagship Showroom'}
           </span>
-          <h1 style={{ fontSize: 'clamp(2.2rem, 4vw, 3.2rem)', fontWeight: 800, marginBottom: '1rem' }}>
+          <h1 style={{ fontSize: 'clamp(2.2rem, 4vw, 3.2rem)', fontWeight: 'normal', marginBottom: '1rem' }}>
             {t.showroom.title}
           </h1>
           <p style={{ fontSize: '1.05rem', lineHeight: 1.7, margin: 0 }}>
@@ -98,7 +98,7 @@ const ContactShowroom = () => {
               gap: '1.5rem',
             }}
           >
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: 'normal', color: 'var(--text-primary)', margin: 0 }}>
               {lang === 'ku' ? 'پێشانگای سەرەکی لە سلێمانی' : lang === 'ar' ? 'صالة العرض الرئيسية بالسليمانية' : 'Sulaymaniyah Flagship Gallery'}
             </h3>
 
@@ -124,9 +124,9 @@ const ContactShowroom = () => {
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>
                   {t.showroom.addressLabel}
                 </span>
-                <strong style={{ fontSize: '1rem', color: 'var(--text-primary)', lineHeight: 1.5, display: 'block' }}>
+                <span style={{ fontSize: '1rem', color: 'var(--text-primary)', lineHeight: 1.5, display: 'block', fontWeight: 'normal' }}>
                   {lang === 'ku' ? info.showroom.addressKu : lang === 'ar' ? info.showroom.addressAr : info.showroom.addressEn}
-                </strong>
+                </span>
               </div>
             </div>
 
@@ -152,9 +152,9 @@ const ContactShowroom = () => {
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>
                   {t.showroom.hoursLabel}
                 </span>
-                <strong style={{ fontSize: '1rem', color: 'var(--text-primary)', lineHeight: 1.5, display: 'block' }}>
+                <span style={{ fontSize: '1rem', color: 'var(--text-primary)', lineHeight: 1.5, display: 'block', fontWeight: 'normal' }}>
                   {lang === 'ku' ? info.showroom.hoursKu : lang === 'ar' ? info.showroom.hoursAr : info.showroom.hoursEn}
-                </strong>
+                </span>
               </div>
             </div>
 
@@ -182,7 +182,7 @@ const ContactShowroom = () => {
                 </span>
                 <a
                   href={`tel:${info.phoneTechnical}`}
-                  style={{ fontSize: '1.05rem', color: 'var(--text-primary)', fontWeight: 700, display: 'block', direction: 'ltr', textAlign: lang === 'en' ? 'left' : 'right' }}
+                  style={{ fontSize: '1.05rem', color: 'var(--text-primary)', fontWeight: 'normal', display: 'block', direction: 'ltr', textAlign: lang === 'en' ? 'left' : 'right' }}
                 >
                   {info.phoneDisplay}
                 </a>
@@ -208,81 +208,49 @@ const ContactShowroom = () => {
               <button
                 type="button"
                 onClick={openMapModal}
-                className="btn-showroom-map"
-                style={{
-                  width: '100%',
-                  minHeight: '52px',
-                  padding: '13px 20px',
-                  borderRadius: '8px',
-                  backgroundColor: '#faf6f0',
-                  border: '1.5px solid #d4a974',
-                  color: '#2b251f',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '12px',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(171, 72, 11, 0.06)',
-                  textDecoration: 'none',
-                  boxSizing: 'border-box',
-                }}
+                className="luxury-action-card-btn btn-showroom-map"
               >
-                <div
-                  className="btn-showroom-map-content"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    color: '#2b251f'
-                  }}
-                >
-                  <AppIcon name="location" size={20} color="#ab480b" />
-                  <span style={{ fontSize: '0.94rem', fontWeight: 700, color: '#2b251f' }}>
-                    {t.showroom.getDirections}
-                  </span>
+                <div className="action-card-main-group">
+                  <div className="action-card-squircle is-map">
+                    <AppIcon name="location" size={22} color="#ffffff" />
+                  </div>
+                  <div className="action-card-text-block">
+                    <span className="action-card-kicker">
+                      {lang === 'ku' ? 'گووگڵ ماپ · سلێمانی' : lang === 'ar' ? 'خرائط جوجل · السليمانية' : 'GOOGLE MAPS · LOCATION'}
+                    </span>
+                    <span className="action-card-title">
+                      {t.showroom.getDirections}
+                    </span>
+                  </div>
                 </div>
-                <AppIcon name={isRtl ? 'arrow-left' : 'arrow-right'} size={16} color="#ab480b" />
+                <div className="action-card-trailing-arrow">
+                  <AppIcon name={isRtl ? 'arrow-left' : 'arrow-right'} size={18} />
+                </div>
               </button>
 
-              {/* Luxury WhatsApp Concierge */}
+              {/* Luxury WhatsApp Concierge (Exact Match to Image 2 Reference) */}
               <a
                 href={getGeneralWhatsAppUrl(lang, info.whatsappNumber)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-showroom-whatsapp"
-                style={{
-                  width: '100%',
-                  minHeight: '52px',
-                  padding: '13px 20px',
-                  borderRadius: '8px',
-                  backgroundColor: '#f0f9f3',
-                  border: '1.5px solid rgba(37, 211, 102, 0.45)',
-                  color: '#0f4a27',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '12px',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(37, 211, 102, 0.08)',
-                  textDecoration: 'none',
-                  boxSizing: 'border-box',
-                }}
+                className="luxury-action-card-btn btn-showroom-whatsapp"
               >
-                <div
-                  className="btn-showroom-whatsapp-content"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    color: '#0f4a27'
-                  }}
-                >
-                  <WhatsAppIcon size={20} color="#25d366" />
-                  <span style={{ fontSize: '0.94rem', fontWeight: 700, color: '#0f4a27' }}>
-                    {t.showroom.chatWhatsApp}
-                  </span>
+                <div className="action-card-main-group">
+                  <div className="action-card-squircle is-whatsapp">
+                    <WhatsAppIcon size={24} color="#ffffff" />
+                  </div>
+                  <div className="action-card-text-block">
+                    <span className="action-card-kicker">
+                      WHATSAPP
+                    </span>
+                    <span className="action-card-title" dir="ltr" style={{ textAlign: isRtl ? 'right' : 'left' }}>
+                      {info.whatsappDisplay || '0772 975 4844'}
+                    </span>
+                  </div>
                 </div>
-                <AppIcon name={isRtl ? 'arrow-left' : 'arrow-right'} size={16} color="#1b6e3e" />
+                <div className="action-card-trailing-arrow">
+                  <AppIcon name={isRtl ? 'arrow-left' : 'arrow-right'} size={18} />
+                </div>
               </a>
 
               {/* Editorial Instagram Atelier Link */}
@@ -290,40 +258,24 @@ const ContactShowroom = () => {
                 href={info.instagram?.url || businessInfo.instagram.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-showroom-instagram"
-                style={{
-                  width: '100%',
-                  minHeight: '52px',
-                  padding: '13px 20px',
-                  borderRadius: '8px',
-                  backgroundColor: '#fdf5f7',
-                  border: '1.5px solid rgba(225, 48, 108, 0.35)',
-                  color: '#421d28',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '12px',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(225, 48, 108, 0.06)',
-                  textDecoration: 'none',
-                  boxSizing: 'border-box',
-                }}
+                className="luxury-action-card-btn btn-showroom-instagram"
               >
-                <div
-                  className="btn-showroom-instagram-content"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    color: '#421d28'
-                  }}
-                >
-                  <InstagramIcon size={19} color="#e1306c" />
-                  <span style={{ fontSize: '0.92rem', fontWeight: 600, color: '#421d28' }}>
-                    {info.instagram?.handle || businessInfo.instagram.handle}
-                  </span>
+                <div className="action-card-main-group">
+                  <div className="action-card-squircle is-instagram">
+                    <InstagramIcon size={22} color="#ffffff" />
+                  </div>
+                  <div className="action-card-text-block">
+                    <span className="action-card-kicker">
+                      INSTAGRAM
+                    </span>
+                    <span className="action-card-title" dir="ltr" style={{ textAlign: isRtl ? 'right' : 'left' }}>
+                      {info.instagram?.handle || businessInfo.instagram.handle || '@unique.furniture.iq'}
+                    </span>
+                  </div>
                 </div>
-                <AppIcon name={isRtl ? 'arrow-left' : 'arrow-right'} size={16} color="#c13584" />
+                <div className="action-card-trailing-arrow">
+                  <AppIcon name={isRtl ? 'arrow-left' : 'arrow-right'} size={18} />
+                </div>
               </a>
             </div>
 
@@ -340,7 +292,7 @@ const ContactShowroom = () => {
               boxShadow: 'var(--shadow-raised-sm)',
             }}
           >
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: 'normal', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
               {lang === 'ku' ? 'نامەی خێرا بۆ پێشانگا' : lang === 'ar' ? 'استفسار مباشر لمعرضنا' : 'Showroom Direct Inquiry'}
             </h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginBottom: '2rem' }}>
@@ -365,7 +317,7 @@ const ContactShowroom = () => {
                 <div style={{ margin: '0 auto 1rem auto' }}>
                   <AppIcon name="check" size={32} color="var(--brand-orange)" />
                 </div>
-                <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                <h4 style={{ fontSize: '1.2rem', fontWeight: 'normal', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
                   {lang === 'ku' ? 'پەیامەکەت ئامادەکرا لە واتساپ' : lang === 'ar' ? 'تم تجهيز المحادثة في واتساب' : 'Inquiry Ready on WhatsApp'}
                 </h4>
                 <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
@@ -386,7 +338,7 @@ const ContactShowroom = () => {
                     style={{
                       display: 'block',
                       fontSize: '0.86rem',
-                      fontWeight: 600,
+                      fontWeight: 'normal',
                       color: 'var(--text-primary)',
                       marginBottom: '0.4rem',
                     }}
@@ -408,7 +360,7 @@ const ContactShowroom = () => {
                     style={{
                       display: 'block',
                       fontSize: '0.86rem',
-                      fontWeight: 600,
+                      fontWeight: 'normal',
                       color: 'var(--text-primary)',
                       marginBottom: '0.4rem',
                     }}
@@ -434,7 +386,7 @@ const ContactShowroom = () => {
                     style={{
                       display: 'block',
                       fontSize: '0.86rem',
-                      fontWeight: 600,
+                      fontWeight: 'normal',
                       color: 'var(--text-primary)',
                       marginBottom: '0.4rem',
                     }}
@@ -453,36 +405,32 @@ const ContactShowroom = () => {
 
                 <button
                   type="submit"
-                  className="btn-form-submit"
+                  className="luxury-action-card-btn btn-form-submit"
                   style={{
                     width: '100%',
-                    minHeight: '52px',
-                    padding: '14px 22px',
-                    borderRadius: '8px',
-                    backgroundColor: '#f0f9f3',
-                    border: '1.5px solid rgba(37, 211, 102, 0.5)',
-                    color: '#0f4a27',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '11px',
-                    cursor: 'pointer',
                     marginTop: '14px',
-                    boxShadow: '0 2px 10px rgba(37, 211, 102, 0.1)',
-                    fontSize: '0.96rem',
-                    fontWeight: 700,
-                    boxSizing: 'border-box',
                   }}
                 >
-                  <WhatsAppIcon size={20} color="#25d366" />
-                  <span style={{ color: '#0f4a27' }}>
-                    {lang === 'ku'
-                      ? 'ناردنی داواکاری لە ڕێگەی واتساپەوە'
-                      : lang === 'ar'
-                      ? 'إرسال الاستفسار عبر واتساب'
-                      : 'Send Inquiry via WhatsApp'}
-                  </span>
-                  <AppIcon name={isRtl ? 'arrow-left' : 'arrow-right'} size={16} color="#1b6e3e" />
+                  <div className="action-card-main-group">
+                    <div className="action-card-squircle is-whatsapp">
+                      <WhatsAppIcon size={24} color="#ffffff" />
+                    </div>
+                    <div className="action-card-text-block">
+                      <span className="action-card-kicker">
+                        {lang === 'ku' ? 'واتساپ · ناردنی خێرا' : lang === 'ar' ? 'واتساب · إرسال فوري' : 'WHATSAPP INQUIRY'}
+                      </span>
+                      <span className="action-card-title">
+                        {lang === 'ku'
+                          ? 'ناردنی داواکاری لە ڕێگەی واتساپەوە'
+                          : lang === 'ar'
+                          ? 'إرسال الاستفسار عبر واتساب'
+                          : 'Send Inquiry via WhatsApp'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="action-card-trailing-arrow">
+                    <AppIcon name={isRtl ? 'arrow-left' : 'arrow-right'} size={18} />
+                  </div>
                 </button>
               </form>
             )}
@@ -500,7 +448,7 @@ const ContactShowroom = () => {
           }}
         >
           <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-            <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700 }}>
+            <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 'normal' }}>
               {lang === 'ku' ? 'نەخشەی شوێنی پێشانگا' : lang === 'ar' ? 'موقع المعرض على الخريطة' : 'Showroom Map Location'}
             </h4>
             <button
@@ -513,7 +461,7 @@ const ContactShowroom = () => {
                 cursor: 'pointer',
                 fontSize: '0.86rem',
                 color: 'var(--accent-earth)',
-                fontWeight: 600,
+                fontWeight: 'normal',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px'

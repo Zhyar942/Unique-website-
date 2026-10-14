@@ -87,15 +87,19 @@ On mobile screens (`@media (max-width: 768px)`), shadow offsets and blur are sca
 
 ---
 
-## 5. Typography Scale
+## 5. Typography Standards & Mandatory Rules
 
-- **Latin Font**: Plus Jakarta Sans, Cinzel (editorial accents)
-- **Kurdish / Arabic Font**: Vazirmatn, Noto Sans Arabic
-- **Hierarchy**:
-  - `h1`: `clamp(1.85rem, 4.2vw, 3.4rem)` — Weight 800
-  - `h2`: `clamp(1.4rem, 2.8vw, 2.4rem)` — Weight 700
-  - `h3`: `clamp(1.1rem, 1.8vw, 1.45rem)` — Weight 700
-  - Body: `clamp(0.92rem, 0.95vw, 1.02rem)` — Line-height 1.65–1.7
+- **Kurdish Font**: **Zain** (`'Zain'`, `Noto Sans Arabic`, system-ui).
+- **Arabic Font**: **Zain**, Noto Sans Arabic.
+- **Latin Font**: Plus Jakarta Sans, Playfair Display (editorial accents).
+- **Mandatory Font Weight Rule**:
+  - **Always use `font-weight: normal` (400) in EVERY language and EVERY situation.**
+  - Headings (`h1`–`h6`), buttons, navigation, product titles, cards, body copy, and metadata all strictly render with `font-weight: normal`. Bold and medium font-weights are prohibited across all viewports.
+- **Fluid Scale**:
+  - `h1`: `clamp(1.85rem, 4.2vw, 3.4rem)` — Weight normal
+  - `h2`: `clamp(1.4rem, 2.8vw, 2.4rem)` — Weight normal
+  - `h3`: `clamp(1.1rem, 1.8vw, 1.45rem)` — Weight normal
+  - Body: `clamp(0.92rem, 0.95vw, 1.02rem)` — Weight normal, Line-height 1.65–1.7
 
 ---
 

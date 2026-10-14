@@ -28,11 +28,31 @@ export default function ShoppingHero() {
           <AppIcon name="location" size={16} />
           {copy.location}
         </Link>
+        {/* Butter-Smooth Scroll Down Indicator */}
+        <div
+          className="hero-scroll-cue hero-stagger-5"
+          onClick={() => {
+            const next = document.querySelector('.service-strip') || document.querySelector('.home-section');
+            if (next) next.scrollIntoView({ behavior: 'smooth' });
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label={copy.scrollHint || 'Scroll to explore'}
+        >
+          <div className="scroll-cue-mouse">
+            <span className="scroll-cue-wheel" />
+          </div>
+          <span className="scroll-cue-text">{copy.scrollHint}</span>
+        </div>
       </div>
 
       <div className="shopping-hero-image">
-        <div className="hero-badge font-heading" aria-label="Established 1978">
-          <span>{copy.badge}</span>
+        {/* Architectural Rectangular Heritage Badge (Horizontal Layout) */}
+        <div className="hero-heritage-badge" aria-label={copy.badgeLabel || 'Since 1978 · Sulaymaniyah'}>
+          <span className="heritage-badge-est">{isRtl ? 'لە ساڵی' : 'SINCE'}</span>
+          <span className="heritage-badge-year">1978</span>
+          <span className="heritage-badge-sep" aria-hidden="true">·</span>
+          <span className="heritage-badge-city">{isRtl ? 'سلێمانی' : 'SULAYMANIYAH'}</span>
         </div>
         <img
           src="/hero_interior.jpg"
@@ -42,7 +62,7 @@ export default function ShoppingHero() {
         />
         <span className="hero-photo-note">
           {t.nav.homeFurniture}
-          <span>UNIQUE / SULAYMANIYAH</span>
+          <span>{isRtl ? 'یۆنیک · سلێمانی · لە ١٩٧٨ەوە' : 'UNIQUE · SULAYMANIYAH · SINCE 1978'}</span>
         </span>
       </div>
 

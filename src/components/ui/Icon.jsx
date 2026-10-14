@@ -34,24 +34,88 @@ import {
   Show,
   Hide,
   Send,
-  Document
+  Document,
+  Home,
+  Heart,
+  Bag,
+  Chat,
+  Message,
+  Notification,
+  InfoCircle,
+  Danger,
+  TwoUsers,
+  AddUser,
+  Bookmark,
+  Calendar,
+  Camera,
+  Discount,
+  Folder,
+  Play,
+  Scan,
+  Unlock,
+  Voice,
+  VolumeUp,
+  VolumeOff,
+  Wallet,
+  Work
 } from 'react-iconly';
 
 /**
- * Standardized UI Icon System using Iconly (Light / Broken style)
- * Consistent sizes:
- *   14 / 16 — compact controls, tags, subtle indicators
- *   18 — normal interface controls, inputs
- *   20 — standard actions, header controls
- *   24 — primary controls
- *   32 — rare large displays
+ * High-precision Iconly-styled Language / Globe Icon
+ * Aligns seamlessly with Iconly Light/Curved stroke geometry
  */
+const LanguageGlobeIcon = ({ size = 20, primaryColor = 'currentColor', ...props }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <circle
+      cx="12"
+      cy="12"
+      r="9.25"
+      stroke={primaryColor}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M3.2 12h17.6"
+      stroke={primaryColor}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M12 2.75C9.7 6.1 8.5 9 8.5 12s1.2 5.9 3.5 9.25"
+      stroke={primaryColor}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M12 2.75c2.3 3.35 3.5 6.25 3.5 9.25s-1.2 5.9-3.5 9.25"
+      stroke={primaryColor}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
+/**
+ * Standardized UI Icon System using Iconly (Light / Curved style)
+ */
 const ICON_MAP = {
   // General Navigation & Controls
   search: Search,
   menu: Category,
+  category: Category,
   close: CloseSquare,
+  home: Home,
   'chevron-down': ChevronDown,
   'chevron-left': ChevronLeft,
   'chevron-right': ChevronRight,
@@ -59,12 +123,15 @@ const ICON_MAP = {
   'arrow-right': ArrowRight,
   'arrow-left': ArrowLeft,
 
-  // Communication & Place
+  // Communication & Place & Language
   call: Call,
   phone: Call,
   location: Location,
   time: TimeCircle,
   clock: TimeCircle,
+  language: LanguageGlobeIcon,
+  globe: LanguageGlobeIcon,
+  discovery: Discovery,
 
   // Feedback & State
   check: TickSquare,
@@ -76,18 +143,24 @@ const ICON_MAP = {
   'shield-done': ShieldDone,
   guarantee: ShieldDone,
   warranty: ShieldDone,
-  discovery: Discovery,
   materials: Discovery,
   show: Show,
   hide: Hide,
   eye: Show,
+  heart: Heart,
+  notification: Notification,
+  info: InfoCircle,
+  danger: Danger,
 
   // Management & Actions
   dashboard: Activity,
   package: Buy,
   products: Buy,
+  bag: Bag,
+  cart: Bag,
   settings: Setting,
   user: User,
+  users: TwoUsers,
   lock: Lock,
   edit: Edit,
   delete: Delete,
@@ -100,7 +173,21 @@ const ICON_MAP = {
   save: Download,
   reset: Swap,
   share: Send,
-  document: Document
+  chat: Chat,
+  message: Message,
+  document: Document,
+  calendar: Calendar,
+  bookmark: Bookmark,
+  discount: Discount,
+  folder: Folder,
+  play: Play,
+  scan: Scan,
+  unlock: Unlock,
+  voice: Voice,
+  volume: VolumeUp,
+  'volume-off': VolumeOff,
+  wallet: Wallet,
+  work: Work
 };
 
 export const AppIcon = ({

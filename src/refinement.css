@@ -53,7 +53,7 @@
 .app-wrapper h1, .app-wrapper h2, .app-wrapper h3 { text-wrap: balance; }
 .app-wrapper p { text-wrap: pretty; }
 .header-shell { border-bottom-color: #e5e0d8; }
-.header-icon-btn, .header-lang-trigger { background: transparent; border-color: transparent; }
+.header-icon-btn { background: transparent; border-color: transparent; }
 .header-nav-list { gap: clamp(22px, 3vw, 44px); }
 
 /* DecorHome-Inspired Editorial Staggered Sequences */
@@ -173,38 +173,147 @@
 .hero-stagger-4 { animation: heroItemStagger 750ms cubic-bezier(0.2, 0.75, 0.25, 1) 420ms both; }
 .hero-stagger-5 { animation: heroItemStagger 750ms cubic-bezier(0.2, 0.75, 0.25, 1) 500ms both; }
 
-/* DecorHome-Inspired Floating Heritage Badge */
-.hero-badge {
+/* Architectural Rectangular Heritage Badge (Frosted Ivory Atelier Edition) */
+.hero-heritage-badge {
   position: absolute;
-  top: clamp(20px, 2.2vw, 28px);
-  inset-inline-start: clamp(20px, 2.2vw, 28px);
+  top: clamp(18px, 2.2vw, 28px);
+  inset-inline-start: clamp(18px, 2.2vw, 28px);
   z-index: 5;
-  width: clamp(82px, 8.2vw, 96px);
-  height: clamp(82px, 8.2vw, 96px);
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #2e2b26 0%, #1a1916 100%);
-  color: #faf7f2;
-  display: flex;
+  width: auto;
+  min-height: 42px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 30px -4px rgba(28, 24, 20, 0.12),
+              0 2px 6px rgba(0, 0, 0, 0.04),
+              inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  display: inline-flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  font-family: var(--font-latin);
-  font-size: clamp(0.66rem, 0.76vw, 0.74rem);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  line-height: 1.36;
-  white-space: pre-line;
-  padding: 8px;
-  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.2);
-  border: 1.5px solid rgba(212, 169, 116, 0.42);
-  animation: heroBadgePop 700ms cubic-bezier(0.34, 1.56, 0.64, 1) 500ms both;
-  will-change: transform;
+  gap: 10px;
+  padding: 8px 18px;
+  white-space: nowrap;
+  user-select: none;
+  cursor: default;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s ease,
+              background-color 0.28s ease;
+  animation: heroBadgePop 850ms cubic-bezier(0.16, 1, 0.3, 1) 300ms both;
+}
+
+.hero-heritage-badge:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.96);
+  border-color: #ffffff;
+  box-shadow: 0 16px 36px -4px rgba(28, 24, 20, 0.16),
+              0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.heritage-badge-est {
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 400 !important;
+  letter-spacing: 0.04em;
+  color: #696259;
+  line-height: 1;
+}
+
+.heritage-badge-year {
+  font-family: var(--font-latin, inherit);
+  font-size: 1.12rem;
+  font-weight: 400 !important;
+  color: #1a1917;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.heritage-badge-sep {
+  color: #c2b8ad;
+  font-size: 0.95rem;
+  line-height: 1;
+  margin: 0 1px;
+}
+
+.heritage-badge-city {
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 400 !important;
+  letter-spacing: 0.04em;
+  color: #ab480b;
+  line-height: 1;
+}
+
+/* Butter-Smooth Scroll Down Indicator */
+.hero-scroll-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: clamp(20px, 2.5vw, 32px);
+  cursor: pointer;
+  user-select: none;
+  color: #8c8275;
+  transition: color 0.25s ease, opacity 0.35s ease, transform 0.35s ease;
+}
+
+.hero-scroll-cue:hover {
+  color: #1a1917;
+}
+
+.hero-scroll-cue.is-hidden {
+  opacity: 0;
   pointer-events: none;
+  transform: translateY(8px);
+}
+
+.scroll-cue-mouse {
+  width: 18px;
+  height: 28px;
+  border-radius: 10px;
+  border: 1.5px solid currentColor;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.scroll-cue-wheel {
+  width: 3px;
+  height: 5px;
+  border-radius: 2px;
+  background-color: currentColor;
+  animation: scrollCueGlide 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes scrollCueGlide {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.3;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.scroll-cue-text {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: inherit;
+  font-weight: normal !important;
 }
 
 .refined-home .shopping-hero .hero-eyebrow {
   font-size: clamp(0.78rem, 0.86vw, 0.88rem);
-  font-weight: 600;
+  font-weight: normal;
   color: #7d6549;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -215,7 +324,7 @@
 .refined-home .shopping-hero h1 {
   font-size: clamp(2.15rem, 3.0vw, 3.15rem);
   line-height: 1.24;
-  font-weight: 600;
+  font-weight: normal;
   margin-bottom: clamp(16px, 1.8vw, 22px);
   letter-spacing: -.02em;
   color: #1f1e1a;
@@ -329,79 +438,15 @@
 .section-kicker { display: block; font-size: clamp(0.74rem, 0.82vw, 0.82rem); letter-spacing: .08em; text-transform: uppercase; font-weight: 600; color: #826e56; margin-bottom: 10px; }
 .refined-home h2 { font-size: clamp(1.75rem, 2.6vw, 2.55rem); line-height: 1.25; margin: 0; letter-spacing: -.02em; color: #1e1d19; }
 .section-heading > p { max-width: 320px; font-size: clamp(0.92rem, 1vw, 0.98rem); line-height: 1.68; margin: 0 0 3px; color: #6a6356; }
-.room-nav {
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  gap: 14px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  padding: 8px 4px 16px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-}
-.room-nav::-webkit-scrollbar {
-  display: none;
-}
-.room-link {
-  flex: 0 0 auto;
-  width: clamp(142px, 10.5vw, 172px);
-  min-height: 126px;
-  border-radius: 14px;
-  padding: 20px 14px 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  color: #18181b;
-  min-width: 130px;
-  position: relative;
-  background: #ffffff;
-  border: 1px solid #e8e4dc;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-  text-decoration: none;
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.2s ease,
-              border-color 0.2s ease,
-              color 0.2s ease;
-}
-.room-link + .room-link {
-  border-inline-start: 1px solid #e8e4dc;
-}
-.room-link span {
-  font-size: 0.95rem;
-  text-align: center;
-  font-weight: normal !important;
-  color: #18181b;
-  line-height: 1.25;
-  white-space: nowrap;
-}
+.room-nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid #e5e0d8; border-radius: 12px; overflow: hidden; }
+.room-link { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; padding: 23px 10px 19px; color: #5f594f; min-width: 0; position: relative; background: #f6f3ee; text-decoration: none; transition: background-color .22s ease, color .22s ease, transform var(--duration-press) var(--ease-natural); }
+.room-link + .room-link { border-inline-start: 1px solid #e5e0d8; }
+.room-link span { font-size: .82rem; text-align: center; font-weight: 500; color: inherit; }
 .room-link > svg,
-.room-link .room-icon {
-  color: #241f21;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-.room-link > .app-icon {
-  display: none;
-}
-.room-link:hover,
-.room-link:focus-visible {
-  color: #18181b;
-  background: #ffffff;
-  border-color: #d8d2c6;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-}
-.room-link:hover > svg {
-  transform: scale(1.05);
-}
-.room-link:active {
-  transform: scale(0.97);
-}
+.room-link .room-icon { color: inherit; transition: transform 0.2s ease; }
+.room-link > .app-icon { position: absolute; top: 12px; inset-inline-end: 12px; opacity: 0; transition: opacity .22s var(--ease-natural), transform .22s var(--ease-out-expo); transform: scale(0.9); }
+.room-link:hover, .room-link:focus-visible { color: #9a511e; background: #ede7dd; }
+.room-link:hover > .app-icon, .room-link:focus-visible > .app-icon { opacity: 1; transform: scale(1); }
 .editorial-link { display: inline-flex; align-items: center; gap: 10px; color: #4f4a40; font-size: .85rem; min-height: 44px; text-decoration: underline; text-decoration-color: #bcb3a5; text-underline-offset: 6px; transition: color 0.18s ease; }
 .editorial-link:hover { color: #a45424; }
 .collection-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
@@ -416,8 +461,12 @@
   box-shadow: none;
   border: 0;
   background: transparent;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-bottom: 6px;
   transition: transform 380ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 380ms cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: transform;
 }
@@ -453,9 +502,33 @@
 .app-wrapper .furniture-card-info { background: transparent; padding: 15px 0 12px; gap: 8px; }
 .app-wrapper .furniture-card-title { font-size: .95rem; line-height: 1.55; font-weight: 500; }
 .app-wrapper .furniture-card-category { font-size: .65rem; letter-spacing: .07em; text-transform: uppercase; color: #81735f; }
-.app-wrapper .card-details { font-size: .76rem; border: 0; padding-top: 7px; }
-.app-wrapper .card-quick-view, .app-wrapper .card-view-product { display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #dfd8ce; border-radius: 8px; background: transparent; min-height: 42px; font-size: .78rem; font-weight: 600; color: #3b3a36; text-decoration: none; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.app-wrapper .card-quick-view:hover, .app-wrapper .card-view-product:hover { background: #2b3024; color: #ffffff; border-color: #2b3024; transform: translateY(-1px); }
+.app-wrapper .card-quick-view, .app-wrapper .card-view-product {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #dfd8ce;
+  border-radius: 8px;
+  background: #fbf9f6;
+  min-height: 44px;
+  padding: 10px 18px;
+  font-size: .82rem;
+  font-weight: normal;
+  color: #3b3a36;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  margin-top: auto;
+  margin-bottom: 2px;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.app-wrapper .card-quick-view:hover, .app-wrapper .card-view-product:hover {
+  background: #242723;
+  color: #ffffff;
+  border-color: #242723;
+  transform: translateY(-1px);
+}
 .app-wrapper .card-view-product .app-icon,
 .editorial-link .app-icon,
 .btn .app-icon { transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1); will-change: transform; }
@@ -1162,16 +1235,25 @@
   .footer-bottom { flex-direction: column; align-items: flex-start; gap: 14px; }
   .footer-heritage-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
   .is-rtl .refined-home .shopping-hero-copy { border-radius: 12px; }
-  .is-rtl .refined-home .shopping-hero-image { border-radius: 12px; }
   .is-rtl .refined-home .shopping-hero h1 { font-size: clamp(1.7rem, 5.2vw, 2.15rem); line-height: 1.25; }
-  .hero-badge {
-    width: 72px;
-    height: 72px;
-    font-size: 0.62rem;
-    line-height: 1.3;
-    padding: 6px;
+  .hero-heritage-badge {
+    width: auto;
+    min-height: 38px;
+    border-radius: 8px;
     top: 14px;
     inset-inline-start: 14px;
+    padding: 7px 14px;
+    gap: 6px;
+  }
+  .hero-heritage-badge .heritage-badge-year {
+    font-size: 1.0rem;
+    margin: 0;
+  }
+  .hero-heritage-badge .heritage-badge-est {
+    font-size: 0.74rem;
+  }
+  .hero-heritage-badge .heritage-badge-city {
+    font-size: 0.76rem;
   }
 }
 
@@ -1185,157 +1267,229 @@
   margin-top: 20px;
 }
 
-/* 1. Primary Showroom Map Trigger (Warm Light Stone) */
-.btn-showroom-map {
-  width: 100%;
-  min-height: 52px;
-  padding: 13px 20px;
-  border-radius: 10px;
-  background: #faf6f0;
-  border: 1.5px solid #d4a974;
-  color: #2b251f;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.94rem;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(171, 72, 11, 0.06);
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-  text-decoration: none;
-}
-
-.btn-showroom-map:hover {
-  background: #f3ece1;
-  border-color: #ab480b;
-  box-shadow: 0 4px 16px rgba(171, 72, 11, 0.16);
-  transform: translateY(-2px);
-  color: #2b251f;
-}
-
-.btn-showroom-map-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* 2. WhatsApp Concierge Button (Light Mint) */
-.btn-showroom-whatsapp {
-  width: 100%;
-  min-height: 52px;
-  padding: 13px 20px;
-  border-radius: 10px;
-  background: #f0f9f3;
-  border: 1.5px solid rgba(37, 211, 102, 0.45);
-  color: #0f4a27;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.94rem;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.08);
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-  text-decoration: none;
-}
-
-.btn-showroom-whatsapp:hover {
-  background: #e3f6ea;
-  border-color: #25d366;
-  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.2);
-  transform: translateY(-2px);
-  color: #0f4a27;
-}
-
-.btn-showroom-whatsapp-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* 3. Instagram Atelier Button (Light Blush Rose) */
-.btn-showroom-instagram {
-  width: 100%;
-  min-height: 52px;
-  padding: 13px 20px;
-  border-radius: 10px;
-  background: #fdf5f7;
-  border: 1.5px solid rgba(225, 48, 108, 0.35);
-  color: #421d28;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.92rem;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(225, 48, 108, 0.06);
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-  text-decoration: none;
-}
-
-.btn-showroom-instagram:hover {
-  background: #fae6ec;
-  border-color: #e1306c;
-  box-shadow: 0 4px 16px rgba(225, 48, 108, 0.18);
-  transform: translateY(-2px);
-  color: #421d28;
-}
-
-.btn-showroom-instagram-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* 4. Form Submit Button (Direct Inquiry Form - Light Mint) */
+/* 1. Showroom & Contact Architectural Action Card Buttons (Matching Image 2 Reference) */
+.luxury-action-card-btn,
+.btn-showroom-map,
+.btn-showroom-whatsapp,
+.btn-showroom-instagram,
 .btn-form-submit {
   width: 100%;
-  min-height: 52px;
-  padding: 14px 22px;
-  border-radius: 10px;
-  background: #f0f9f3;
-  border: 1.5px solid rgba(37, 211, 102, 0.5);
-  color: #0f4a27;
+  min-height: 64px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: #21201d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f7f5f2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+  font-weight: normal !important;
+  text-align: inherit;
+}
+
+.action-card-main-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  flex: 1;
+}
+
+/* Dedicated Squircle Icon Badge */
+.action-card-squircle {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 11px;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.96rem;
-  font-weight: 700;
-  margin-top: 14px;
-  box-shadow: 0 2px 10px rgba(37, 211, 102, 0.1);
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.action-card-squircle.is-whatsapp {
+  background: #25d366;
+  color: #ffffff;
+}
+
+.action-card-squircle.is-instagram {
+  background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+  color: #ffffff;
+}
+
+.action-card-squircle.is-map {
+  background: #2f2e2b;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #f7f5f2;
+}
+
+/* Two-tier Text Hierarchy */
+.action-card-text-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+[dir="rtl"] .action-card-text-block {
+  align-items: flex-start;
+  text-align: right;
+}
+
+[dir="ltr"] .action-card-text-block {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.action-card-kicker {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9e9b94;
+  font-weight: normal !important;
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+
+.action-card-title {
+  font-size: 1.05rem;
+  color: #ffffff;
+  font-weight: normal !important;
+  font-family: 'Zain', 'Noto Sans Arabic', system-ui, sans-serif;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Trailing Chevron Arrow */
+.action-card-trailing-arrow {
+  color: #827e77;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hovers */
+.luxury-action-card-btn:hover,
+.btn-showroom-map:hover,
+.btn-showroom-whatsapp:hover,
+.btn-showroom-instagram:hover,
 .btn-form-submit:hover {
-  background: #e3f6ea;
-  border-color: #25d366;
-  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.22);
+  background: #282622;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.26), 0 2px 6px rgba(0, 0, 0, 0.12);
   transform: translateY(-2px);
-  color: #0f4a27;
+  color: #ffffff;
 }
 
+.luxury-action-card-btn:hover .action-card-squircle,
+.btn-showroom-map:hover .action-card-squircle,
+.btn-showroom-whatsapp:hover .action-card-squircle,
+.btn-showroom-instagram:hover .action-card-squircle,
+.btn-form-submit:hover .action-card-squircle {
+  transform: scale(1.05);
+}
+
+.btn-showroom-whatsapp:hover,
+.btn-form-submit:hover {
+  border-color: rgba(37, 211, 102, 0.45);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.16), 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-showroom-instagram:hover {
+  border-color: rgba(225, 48, 108, 0.45);
+  box-shadow: 0 8px 24px rgba(225, 48, 108, 0.16), 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-showroom-map:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32), 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+[dir="rtl"] .luxury-action-card-btn:hover .action-card-trailing-arrow,
+[dir="rtl"] .btn-showroom-map:hover .action-card-trailing-arrow,
+[dir="rtl"] .btn-showroom-whatsapp:hover .action-card-trailing-arrow,
+[dir="rtl"] .btn-showroom-instagram:hover .action-card-trailing-arrow,
+[dir="rtl"] .btn-form-submit:hover .action-card-trailing-arrow {
+  transform: translateX(-4px);
+  color: #ffffff;
+}
+
+[dir="ltr"] .luxury-action-card-btn:hover .action-card-trailing-arrow,
+[dir="ltr"] .btn-showroom-map:hover .action-card-trailing-arrow,
+[dir="ltr"] .btn-showroom-whatsapp:hover .action-card-trailing-arrow,
+[dir="ltr"] .btn-showroom-instagram:hover .action-card-trailing-arrow,
+[dir="ltr"] .btn-form-submit:hover .action-card-trailing-arrow {
+  transform: translateX(4px);
+  color: #ffffff;
+}
+
+/* Active State */
+.luxury-action-card-btn:active,
 .btn-form-submit:active,
 .btn-showroom-map:active,
 .btn-showroom-whatsapp:active,
-.btn-showroom-instagram:active,
-.btn-visit-whatsapp:active {
-  transform: translateY(0);
+.btn-showroom-instagram:active {
+  transform: translateY(0) scale(0.985);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+}
+
+/* Standalone Visit WhatsApp Button */
+.btn-visit-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1f1e1a;
+  border: 1px solid #dfd8ce;
+  font-size: 0.88rem;
+  font-weight: normal;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(48, 46, 41, 0.04), 0 1px 2px rgba(48, 46, 41, 0.02);
+  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.btn-whatsapp-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(37, 211, 102, 0.12);
+  flex-shrink: 0;
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.24s ease;
 }
 
 .btn-visit-whatsapp:hover {
-  background: #e3f6ea !important;
-  border-color: #25d366 !important;
-  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.2) !important;
+  background: #ffffff !important;
+  border-color: rgba(37, 211, 102, 0.6) !important;
+  color: #141310 !important;
+  box-shadow: 0 8px 24px -4px rgba(37, 211, 102, 0.2), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
   transform: translateY(-2px);
+}
+
+.btn-visit-whatsapp:hover .btn-whatsapp-icon-wrap {
+  transform: scale(1.1);
+  background: rgba(37, 211, 102, 0.2);
 }
 
 /* 5. Product Detail & QuickView Light Action Buttons */
@@ -1501,32 +1655,12 @@
     font-weight: 500;
   }
 
-  /* Room nav on mobile: clean 2-column grid instead of weird 6-col span */
-  .room-nav {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px;
-    border: none !important;
-    background: transparent !important;
-  }
-
-  .room-link {
-    grid-column: auto !important;
-    border: 1px solid #e5e0d8 !important;
-    border-radius: 10px !important;
-    background: #f6f3ee !important;
-    padding: 16px 12px !important;
-  }
-
-  .room-link:last-child {
-    grid-column: span 2 !important;
-  }
 }
 
 
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-badge,
+  .hero-heritage-badge,
   .hero-stagger-1,
   .hero-stagger-2,
   .hero-stagger-3,
@@ -1540,4 +1674,34 @@
     transform: none !important;
   }
 }
+
+/* ========================================================
+   GLOBAL MANDATORY TYPOGRAPHY STANDARDS:
+   1. Kurdish Font: Zain
+   2. Font Weight: Always normal in every language & situation
+   ======================================================== */
+html[lang="ku"],
+html[lang="ku"] body,
+html[lang="ku"] *,
+html[lang="ku"] *::before,
+html[lang="ku"] *::after {
+  font-family: 'Zain', var(--font-kurdish) !important;
+}
+
+*,
+*::before,
+*::after,
+html,
+body,
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, li, ul, ol,
+strong, b, em, i,
+button, .btn,
+input, select, textarea,
+th, td, dt, dd,
+label, small,
+[class] {
+  font-weight: normal !important;
+}
+
 

@@ -333,7 +333,7 @@ export default function DesignSystemShowcase() {
             <span className="section-kicker">04 / CATEGORY CARDS SYSTEM</span>
             <h2>Minimalist Outline Category Cards</h2>
             <p>
-              Features centered outline SVG furniture icons, clean normal font typography, live item availability counts, and luxury slate-blue active state (#486581).
+              Features centered outline SVG furniture icons, clean normal font typography, live item availability counts, and signature architectural charcoal active state (#18181B).
             </p>
           </div>
 

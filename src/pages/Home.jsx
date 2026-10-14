@@ -92,24 +92,11 @@ export default function Home() {
               href={getGeneralWhatsAppUrl(lang, info.whatsappNumber)}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '9px',
-                backgroundColor: '#f0f9f3',
-                color: '#0f4a27',
-                border: '1.5px solid rgba(37, 211, 102, 0.45)',
-                borderRadius: '6px',
-                padding: '11px 20px',
-                fontSize: '0.88rem',
-                fontWeight: 600,
-                textDecoration: 'none',
-                cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(37, 211, 102, 0.08)',
-                transition: 'all 0.2s ease',
-              }}
+              aria-label={copy.question}
             >
-              <WhatsAppIcon size={18} color="#25d366" />
+              <span className="btn-whatsapp-icon-wrap" aria-hidden="true">
+                <WhatsAppIcon size={18} color="#25d366" />
+              </span>
               <span>{copy.question}</span>
             </a>
           </div>

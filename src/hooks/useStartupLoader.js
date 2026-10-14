@@ -53,26 +53,28 @@ export default function useStartupLoader() {
         return;
       }
 
-      // Phase 1: "give the logo" — Present full logo in the center for a clear viewing pause
-      await wait(850);
+      // Phase 1: Unified logo presentation pause
+      await wait(750);
       if (!active) return;
 
-      // Phase 2: "then go in to the u" — Text slides into the 'U' emblem in the center
+      // Phase 2: Silky accordion fold into the 'U' emblem
       loader.classList.add('is-packing');
-      await wait(500);
+      await wait(820);
       if (!active) return;
 
-      // Concurrently wait for background asset preloading, capped at 2600ms
+      // Concurrently wait for background asset preloading, capped at 1200ms
       await Promise.race([
         resourcesPromise,
-        wait(2600),
+        wait(1200),
       ]);
       if (!active) return;
 
-      // Phase 3: "and continue to the top" — The 'U' emblem travels to the header
+      // Phase 3: The 'U' emblem travels to the header with ultra-smooth easing
       const logo = loader.querySelector('.startup-logo');
       const destination = [...document.querySelectorAll('.header-logo-img, .header-symbol-img')]
         .find((image) => image.getBoundingClientRect().width > 0);
+
+      const flightDuration = 1150;
 
       if (logo && destination && logo.animate) {
         const start = logo.getBoundingClientRect();
@@ -87,14 +89,14 @@ export default function useStartupLoader() {
         loader.classList.add('is-docking');
         document.body.classList.replace('is-loading', 'is-docking');
 
-        // Phase 4: "and come out of the u in top" — Trigger text emergence as 'U' reaches top dock
+        // Phase 4: Trigger text emergence as 'U' nears top dock (at 700ms into 1150ms flight)
         timers.push(setTimeout(() => {
           if (active && loader) {
             loader.classList.add('is-settling');
           }
-        }, 620));
+        }, 700));
 
-        // Calm, luxurious flight of the 'U' to the header
+        // Luxurious, butter-smooth flight of the 'U' to the header
         dockingAnimation = logo.animate([
           {
             transform: 'translate3d(0px, 0px, 0) scale(1)'
@@ -103,7 +105,7 @@ export default function useStartupLoader() {
             transform: `translate3d(${dx}px, ${dy}px, 0) scale(${sx}, ${sy})`
           }
         ], {
-          duration: 1050,
+          duration: flightDuration,
           easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
           fill: 'forwards'
         });
@@ -117,15 +119,22 @@ export default function useStartupLoader() {
 
       if (dockingAnimation) {
         await dockingAnimation.finished.catch(() => {});
-        // Allow text-out-of-u (starts at 620ms, takes 480ms -> 1100ms) to settle seamlessly
-        await wait(180);
+        // After flight finishes, allow 360ms for the final letters to reach resting dock
+        await wait(360);
       } else {
-        await wait(600);
+        await wait(400);
       }
 
       if (!active) return;
-      loader.remove();
+      // Seamless zero-flicker crossfade into the live header
+      loader.classList.add('is-leaving');
+      document.body.classList.add('is-leaving');
       document.body.classList.remove('is-docking');
+      await wait(380);
+
+      if (!active) return;
+      loader.remove();
+      document.body.classList.remove('is-leaving');
       window.removeEventListener('resize', handleResize);
       document.getElementById('root')?.removeAttribute('inert');
     };

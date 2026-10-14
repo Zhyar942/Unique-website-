@@ -49,54 +49,24 @@ export default function CollectionFilters({
   label
 }) {
   const { lang, t } = useLanguage();
-  let liveProducts = staticProducts;
-  try {
-    const catalog = useCatalog();
-    if (catalog?.products) liveProducts = catalog.products;
-  } catch {
-    // fallback to staticProducts
-  }
+  const catalog = useCatalog();
+  const liveProducts = catalog?.products || staticProducts;
 
   // Backward compatibility for simple pill options (e.g. Home.jsx)
   if (options) {
     return (
-      <div className="collection-filters-styled" role="group" aria-label={label}>
-        <div className="clean-category-track" role="tablist">
-          {options.map((option) => {
-            const isSelected = value === option.id;
-            const count = liveProducts.filter((p) => {
-              if (p.published === false) return false;
-              if (option.id === 'new') return !!p.isNew;
-              if (option.id === 'all') return true;
-              return p.type === option.id;
-            }).length;
-
-            const iconName = option.id === 'home' ? 'home' : option.id === 'office' ? 'office' : 'all';
-
-            return (
-              <button
-                key={option.id}
-                type="button"
-                role="tab"
-                aria-selected={isSelected}
-                onClick={() => onChange(option.id)}
-                className={`clean-category-card ${isSelected ? 'is-active' : ''}`}
-              >
-                <div className="clean-category-icon-box">
-                  <RoomIcon name={iconName} size={34} strokeWidth={1.75} />
-                </div>
-                <span className="clean-category-title">{option.label}</span>
-                <span className="clean-category-count">
-                  {lang === 'ku'
-                    ? `${count} دانە بەردەستە`
-                    : lang === 'ar'
-                    ? `${count} قطعة متوفرة`
-                    : `${count} Item Available`}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+      <div className="collection-filters" role="group" aria-label={label}>
+        {options.map((option) => (
+          <button
+            key={option.id}
+            type="button"
+            aria-pressed={value === option.id}
+            onClick={() => onChange(option.id)}
+            className={value === option.id ? 'is-selected' : ''}
+          >
+            {option.label}
+          </button>
+        ))}
       </div>
     );
   }

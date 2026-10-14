@@ -58,19 +58,19 @@ export default function useScrollReveal(content) {
             if (target.classList.contains('furniture-card') || target.classList.contains('category-showcase-card')) {
               const siblings = target.parentElement ? [...target.parentElement.children] : [target];
               const index = siblings.indexOf(target);
-              const staggerDelay = index >= 0 ? (index % 4) * 75 : 0;
+              const staggerDelay = index >= 0 ? (index % 4) * 65 : 0;
 
               // Card envelope lift
               play(
                 target,
                 [
-                  { opacity: 0, transform: 'translate3d(0, 30px, 0) scale(0.97)' },
+                  { opacity: 0, transform: 'translate3d(0, 18px, 0) scale(0.985)' },
                   { opacity: 1, transform: 'translate3d(0, 0, 0) scale(1)' },
                 ],
                 {
-                  duration: 780,
+                  duration: 820,
                   delay: staggerDelay,
-                  easing: 'cubic-bezier(0.2, 0.75, 0.25, 1)',
+                  easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                   fill: 'backwards',
                 }
               );
@@ -81,12 +81,12 @@ export default function useScrollReveal(content) {
                 play(
                   innerImg,
                   [
-                    { transform: 'scale(1.08)' },
+                    { transform: 'scale(1.05)' },
                     { transform: 'scale(1)' },
                   ],
                   {
-                    duration: 950,
-                    delay: staggerDelay + 40,
+                    duration: 980,
+                    delay: staggerDelay + 30,
                     easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                     fill: 'backwards',
                   }
@@ -105,13 +105,13 @@ export default function useScrollReveal(content) {
                 play(
                   kicker,
                   [
-                    { opacity: 0, transform: 'translate3d(0, 14px, 0)' },
+                    { opacity: 0, transform: 'translate3d(0, 10px, 0)' },
                     { opacity: 1, transform: 'translate3d(0, 0, 0)' },
                   ],
                   {
-                    duration: 620,
+                    duration: 650,
                     delay: 0,
-                    easing: 'cubic-bezier(0.2, 0.75, 0.25, 1)',
+                    easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                     fill: 'backwards',
                   }
                 );
@@ -121,13 +121,13 @@ export default function useScrollReveal(content) {
                 play(
                   title,
                   [
-                    { opacity: 0, transform: 'translate3d(0, 24px, 0)' },
+                    { opacity: 0, transform: 'translate3d(0, 16px, 0)' },
                     { opacity: 1, transform: 'translate3d(0, 0, 0)' },
                   ],
                   {
-                    duration: 760,
-                    delay: 80,
-                    easing: 'cubic-bezier(0.2, 0.75, 0.25, 1)',
+                    duration: 780,
+                    delay: 60,
+                    easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                     fill: 'backwards',
                   }
                 );
@@ -137,12 +137,12 @@ export default function useScrollReveal(content) {
                 play(
                   textOrLink,
                   [
-                    { opacity: 0, transform: 'translate3d(0, 18px, 0)' },
+                    { opacity: 0, transform: 'translate3d(0, 12px, 0)' },
                     { opacity: 1, transform: 'translate3d(0, 0, 0)' },
                   ],
                   {
-                    duration: 720,
-                    delay: 160,
+                    duration: 750,
+                    delay: 130,
                     easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                     fill: 'backwards',
                   }
@@ -155,18 +155,18 @@ export default function useScrollReveal(content) {
             if (target.classList.contains('service-item')) {
               const siblings = target.parentElement ? [...target.parentElement.children] : [target];
               const index = siblings.indexOf(target);
-              const delay = Math.max(0, index) * 85;
+              const delay = Math.max(0, index) * 60;
 
               play(
                 target,
                 [
-                  { opacity: 0, transform: 'translate3d(0, 24px, 0)' },
+                  { opacity: 0, transform: 'translate3d(0, 16px, 0)' },
                   { opacity: 1, transform: 'translate3d(0, 0, 0)' },
                 ],
                 {
-                  duration: 680,
+                  duration: 720,
                   delay,
-                  easing: 'cubic-bezier(0.2, 0.75, 0.25, 1)',
+                  easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                   fill: 'backwards',
                 }
               );
@@ -176,13 +176,13 @@ export default function useScrollReveal(content) {
                 play(
                   icon,
                   [
-                    { transform: 'scale(0.86)' },
+                    { transform: 'scale(0.92)' },
                     { transform: 'scale(1)' },
                   ],
                   {
-                    duration: 520,
-                    delay: delay + 60,
-                    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    duration: 600,
+                    delay: delay + 40,
+                    easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                     fill: 'backwards',
                   }
                 );
@@ -194,18 +194,18 @@ export default function useScrollReveal(content) {
             if (target.classList.contains('room-link')) {
               const siblings = target.parentElement ? [...target.parentElement.children] : [target];
               const index = siblings.indexOf(target);
-              const delay = Math.max(0, index) * 60;
+              const delay = Math.max(0, index) * 50;
 
               play(
                 target,
                 [
-                  { opacity: 0, transform: 'translate3d(0, 20px, 0)' },
+                  { opacity: 0, transform: 'translate3d(0, 14px, 0)' },
                   { opacity: 1, transform: 'translate3d(0, 0, 0)' },
                 ],
                 {
-                  duration: 650,
+                  duration: 700,
                   delay,
-                  easing: 'cubic-bezier(0.2, 0.75, 0.25, 1)',
+                  easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                   fill: 'backwards',
                 }
               );
@@ -217,12 +217,12 @@ export default function useScrollReveal(content) {
               play(
                 target,
                 [
-                  { opacity: 0, transform: 'translate3d(0, 32px, 0) scale(0.98)' },
+                  { opacity: 0, transform: 'translate3d(0, 20px, 0) scale(0.99)' },
                   { opacity: 1, transform: 'translate3d(0, 0, 0) scale(1)' },
                 ],
                 {
-                  duration: 880,
-                  easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                  duration: 900,
+                  easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                   fill: 'backwards',
                 }
               );
@@ -235,13 +235,13 @@ export default function useScrollReveal(content) {
                 play(
                   el,
                   [
-                    { opacity: 0, transform: 'translate3d(0, 20px, 0)' },
+                    { opacity: 0, transform: 'translate3d(0, 14px, 0)' },
                     { opacity: 1, transform: 'translate3d(0, 0, 0)' },
                   ],
                   {
-                    duration: 700,
-                    delay: idx * 75,
-                    easing: 'cubic-bezier(0.2, 0.75, 0.25, 1)',
+                    duration: 750,
+                    delay: idx * 60,
+                    easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                     fill: 'backwards',
                   }
                 );
@@ -252,16 +252,16 @@ export default function useScrollReveal(content) {
             // 6. Generic targets with clean smooth slide
             const siblings = target.parentElement ? [...target.parentElement.children] : [target];
             const siblingIndex = siblings.indexOf(target);
-            const staggerDelay = siblingIndex >= 0 ? Math.min(siblingIndex % 4, 3) * 45 : 0;
+            const staggerDelay = siblingIndex >= 0 ? Math.min(siblingIndex % 4, 3) * 40 : 0;
 
             play(
               target,
               [
-                { opacity: 0, transform: 'translate3d(0, 22px, 0)' },
+                { opacity: 0, transform: 'translate3d(0, 16px, 0)' },
                 { opacity: 1, transform: 'translate3d(0, 0, 0)' },
               ],
               {
-                duration: 720,
+                duration: 760,
                 delay: staggerDelay,
                 easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                 fill: 'backwards',
@@ -271,7 +271,7 @@ export default function useScrollReveal(content) {
         },
         {
           threshold: 0.02,
-          rootMargin: '0px 0px 120px 0px',
+          rootMargin: '0px 0px 200px 0px',
         }
       );
 

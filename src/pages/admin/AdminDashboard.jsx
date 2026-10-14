@@ -1,86 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useMemo, useDeferredValue } from 'react';
 import { useRouter } from '../../context/RouterContext';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 import { useCatalog } from '../../context/CatalogContext';
 import { AppIcon } from '../../components/ui/Icon';
-import { optimizeImageFile } from '../../utils/imageOptimizer';
-
-const AVAILABLE_SHOWROOM_IMAGES = [
-  '/images/sofa_cloud_sectional.jpg',
-  '/images/dining_table_marble.jpg',
-  '/images/executive_desk_walnut.jpg',
-  '/images/bedroom_king_bed.jpg',
-  '/images/meeting_conference_table.jpg',
-  '/hero_interior.jpg',
-  '/banner_interior.jpg'
-];
-
-const CATEGORY_PRESETS = {
-  home: [
-    {
-      key: 'living',
-      en: 'Living Room',
-      ku: 'ژووری میوان و دانیشتن',
-      ar: 'غرفة المعيشة'
-    },
-    {
-      key: 'dining',
-      en: 'Dining Room',
-      ku: 'ژووری نانخواردن',
-      ar: 'غرفة الطعام'
-    },
-    {
-      key: 'bedroom',
-      en: 'Bedroom',
-      ku: 'ژووری نووستن',
-      ar: 'غرفة النوم'
-    },
-    {
-      key: 'coffeeTables',
-      en: 'Coffee Tables',
-      ku: 'مێزی ناوەڕاست',
-      ar: 'طاولات الوسط'
-    },
-    {
-      key: 'tvUnits',
-      en: 'TV Units',
-      ku: 'مێزی تەلەفزیۆن',
-      ar: 'طاولات التلفزيون'
-    },
-    {
-      key: 'storage',
-      en: 'Storage & Cabinets',
-      ku: 'دۆڵاب و ڕەفە',
-      ar: 'الخزائن والرفوف'
-    }
-  ],
-  office: [
-    {
-      key: 'executive',
-      en: 'Executive Desks',
-      ku: 'مێزی بەڕێوەبەرایەتی',
-      ar: 'المكاتب التنفيذية'
-    },
-    {
-      key: 'meeting',
-      en: 'Meeting Tables',
-      ku: 'ژووری کۆبوونەوە',
-      ar: 'طاولات الاجتماعات'
-    },
-    {
-      key: 'chairs',
-      en: 'Office & Lounge Chairs',
-      ku: 'کورسی ئۆفیس و پشوودان',
-      ar: 'كراسي الراحة والعمل'
-    },
-    {
-      key: 'storage',
-      en: 'Office Storage',
-      ku: 'دۆڵاب و کەنتۆری ئۆفیس',
-      ar: 'خزائن المكاتب'
-    }
-  ]
-};
+import ProductTableRow from './ProductTableRow';
+import ProductEditModal from './ProductEditModal';
+import './admin.css';
 
 const AdminDashboard = () => {
   const { navigate } = useRouter();
@@ -98,46 +23,23 @@ const AdminDashboard = () => {
     resetCatalogToDefaults
   } = useCatalog();
 
-  const [activeTab, setActiveTab] = useState('products'); // 'dashboard', 'products', 'settings'
-  const [searchQuery, setSearchQuery] = useState('');
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  // Navigation & View state
+  const [activeTab, setActiveTab] = useState('products'); // 'products', 'dashboard', 'settings'
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  // Product Modal State
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProductId, setEditingProductId] = useState(null);
-  const [customCategoryMode, setCustomCategoryMode] = useState(false);
-  const fileInputRef = useRef(null);
-  const galleryInputRef = useRef(null);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [imageUploadError, setImageUploadError] = useState('');
-  const [showUrlInput, setShowUrlInput] = useState(false);
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
-  const [productForm, setProductForm] = useState({
-    titleEn: '',
-    titleKu: '',
-    titleAr: '',
-    code: '',
-    type: 'home',
-    categoryKey: 'living',
-    categoryEn: 'Living Room',
-    categoryKu: 'ژووری میوان و دانیشتن',
-    categoryAr: 'غرفة المعيشة',
-    dimensions: '',
-    materialsEn: '',
-    materialsKu: '',
-    materialsAr: '',
-    shortDescEn: '',
-    shortDescKu: '',
-    shortDescAr: '',
-    images: ['/images/sofa_cloud_sectional.jpg'],
-    featured: false,
-    isNew: true,
-    published: true
-  });
+  // Filters & Search
+  const [searchInput, setSearchInput] = useState('');
+  const deferredSearch = useDeferredValue(searchInput);
+  const [typeFilter, setTypeFilter] = useState('all'); // 'all', 'home', 'office'
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [quickFilter, setQuickFilter] = useState('all'); // 'all', 'published', 'featured', 'new'
 
-  // Settings Form State
+  // Modals state
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [deleteCandidate, setDeleteCandidate] = useState(null);
+
+  // Settings State
   const [settingsForm, setSettingsForm] = useState({
     phoneDisplay: settings.phoneDisplay || '0772 975 4844',
     phoneTechnical: settings.phoneTechnical || '+9647729754844',
@@ -150,9 +52,10 @@ const AdminDashboard = () => {
     addressEn: settings.showroom?.addressEn || '',
     hoursKu: settings.showroom?.hoursKu || '',
     hoursAr: settings.showroom?.hoursAr || '',
-    hoursEn: settings.showroom?.hoursEn || ''
+    hoursEn: settings.showroom?.hoursEn || '',
+    googleMapsUrl: settings.showroom?.googleMapsUrl || '',
+    appleMapsUrl: settings.showroom?.appleMapsUrl || ''
   });
-
   const [settingsSaved, setSettingsSaved] = useState(false);
 
   // Authentication Guard: Redirect to /admin/login if not logged in
@@ -162,296 +65,139 @@ const AdminDashboard = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  // Handle Type Filter Change
-  const handleTypeFilterChange = (newType) => {
-    setTypeFilter(newType);
-    setCategoryFilter('all');
-  };
+  // Keep settingsForm synced if settings update externally
+  React.useEffect(() => {
+    if (settings) {
+      setSettingsForm((prev) => ({
+        ...prev,
+        phoneDisplay: settings.phoneDisplay || prev.phoneDisplay,
+        phoneTechnical: settings.phoneTechnical || prev.phoneTechnical,
+        whatsappDisplay: settings.whatsappDisplay || prev.whatsappDisplay,
+        whatsappNumber: settings.whatsappNumber || prev.whatsappNumber,
+        instagramUrl: settings.instagram?.url || prev.instagramUrl,
+        instagramHandle: settings.instagram?.handle || prev.instagramHandle,
+        addressKu: settings.showroom?.addressKu || prev.addressKu,
+        addressAr: settings.showroom?.addressAr || prev.addressAr,
+        addressEn: settings.showroom?.addressEn || prev.addressEn,
+        hoursKu: settings.showroom?.hoursKu || prev.hoursKu,
+        hoursAr: settings.showroom?.hoursAr || prev.hoursAr,
+        hoursEn: settings.showroom?.hoursEn || prev.hoursEn,
+        googleMapsUrl: settings.showroom?.googleMapsUrl || prev.googleMapsUrl,
+        appleMapsUrl: settings.showroom?.appleMapsUrl || prev.appleMapsUrl
+      }));
+    }
+  }, [settings]);
 
-  // Compute Categories available for current filter / catalog
-  const availableCategories = React.useMemo(() => {
-    const targetTypeProducts = typeFilter === 'all' ? products : products.filter((p) => p.type === typeFilter);
+  // Compute Categories available for current type
+  const availableCategories = useMemo(() => {
     const map = new Map();
-    const presetList = typeFilter === 'all'
-      ? [...CATEGORY_PRESETS.home, ...CATEGORY_PRESETS.office]
-      : (CATEGORY_PRESETS[typeFilter] || []);
-
-    presetList.forEach((item) => {
-      if (!map.has(item.key)) {
-        map.set(item.key, { key: item.key, ku: item.ku, en: item.en });
-      }
-    });
-
-    targetTypeProducts.forEach((p) => {
-      if (p.categoryKey && !map.has(p.categoryKey)) {
-        map.set(p.categoryKey, {
-          key: p.categoryKey,
-          ku: p.category?.ku || p.categoryKey,
-          en: p.category?.en || p.categoryKey
+    products.forEach((p) => {
+      if (typeFilter !== 'all' && p.type !== typeFilter) return;
+      const key = p.categoryKey || 'general';
+      if (!map.has(key)) {
+        map.set(key, {
+          key,
+          en: p.category?.en || key,
+          ku: p.category?.ku || p.category?.en || key,
+          count: 1
         });
+      } else {
+        map.get(key).count += 1;
       }
     });
-
     return Array.from(map.values());
   }, [products, typeFilter]);
+
+  // Stats calculation
+  const stats = useMemo(() => {
+    const total = products.length;
+    const published = products.filter((p) => p.published !== false).length;
+    const featured = products.filter((p) => Boolean(p.featured)).length;
+    const newItems = products.filter((p) => Boolean(p.isNew)).length;
+    return { total, published, featured, newItems };
+  }, [products]);
+
+  // Filtered Products (Memoized for zero-lag performance)
+  const filteredProducts = useMemo(() => {
+    const query = deferredSearch.trim().toLowerCase();
+
+    return products.filter((p) => {
+      // Type
+      if (typeFilter !== 'all' && p.type !== typeFilter) return false;
+
+      // Category
+      if (categoryFilter !== 'all' && p.categoryKey !== categoryFilter) return false;
+
+      // Quick KPI Filter
+      if (quickFilter === 'published' && p.published === false) return false;
+      if (quickFilter === 'featured' && !p.featured) return false;
+      if (quickFilter === 'new' && !p.isNew) return false;
+
+      // Search Query
+      if (query) {
+        const matchesCode = p.code?.toLowerCase().includes(query);
+        const matchesTitleEn = p.title?.en?.toLowerCase().includes(query);
+        const matchesTitleKu = p.title?.ku?.toLowerCase().includes(query);
+        const matchesTitleAr = p.title?.ar?.toLowerCase().includes(query);
+        const matchesCatEn = p.category?.en?.toLowerCase().includes(query);
+        const matchesCatKu = p.category?.ku?.toLowerCase().includes(query);
+        const matchesCol = Array.isArray(p.collections) && p.collections.some((c) => c.toLowerCase().includes(query));
+
+        if (!matchesCode && !matchesTitleEn && !matchesTitleKu && !matchesTitleAr && !matchesCatEn && !matchesCatKu && !matchesCol) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [products, typeFilter, categoryFilter, quickFilter, deferredSearch]);
 
   if (!isAuthenticated) {
     return null;
   }
 
-  // Filter Products
-  const filteredProducts = products.filter((p) => {
-    const matchesType = typeFilter === 'all' || p.type === typeFilter;
-    const matchesCategory = categoryFilter === 'all' || p.categoryKey === categoryFilter;
-    const q = searchQuery.toLowerCase();
-    const matchesSearch =
-      !q ||
-      p.code?.toLowerCase().includes(q) ||
-      p.title?.en?.toLowerCase().includes(q) ||
-      p.title?.ku?.toLowerCase().includes(q) ||
-      p.title?.ar?.toLowerCase().includes(q) ||
-      p.category?.en?.toLowerCase().includes(q) ||
-      p.category?.ku?.toLowerCase().includes(q) ||
-      p.category?.ar?.toLowerCase().includes(q);
-    return matchesType && matchesCategory && matchesSearch;
-  });
-
+  // Action Handlers
   const handleOpenAddModal = () => {
-    setEditingProductId(null);
-    setCustomCategoryMode(false);
-    const defaultPreset = CATEGORY_PRESETS.home[0];
-    setProductForm({
-      titleEn: '',
-      titleKu: '',
-      titleAr: '',
-      code: `UF-${Date.now().toString().slice(-4)}`,
-      type: 'home',
-      categoryKey: defaultPreset.key,
-      categoryEn: defaultPreset.en,
-      categoryKu: defaultPreset.ku,
-      categoryAr: defaultPreset.ar,
-      dimensions: '220cm (W) × 95cm (D) × 75cm (H)',
-      materialsEn: 'Solid American Walnut, High-Resilience Fabric',
-      materialsKu: 'داری گوێزی ئەمریکی، قوماشی دژە-پەڵە',
-      materialsAr: 'خشب الجوز الأمريكي، أقمشة فاخرة',
-      shortDescEn: 'Bespoke modern craftsmanship tailored for elegant spaces.',
-      shortDescKu: 'دیزاینێکی سەردەمیانە و تایبەت بە کەرەستەی بەرز.',
-      shortDescAr: 'تصميم أنيق وعصري ملائم للمساحات الراقية.',
-      images: ['/images/sofa_cloud_sectional.jpg'],
-      featured: false,
-      isNew: true,
-      published: true
-    });
-    setIsModalOpen(true);
+    setSelectedProduct(null);
+    setEditModalOpen(true);
   };
 
   const handleOpenEditModal = (prod) => {
-    setEditingProductId(prod.id);
-    const prodType = prod.type || 'home';
-    const isPreset = (CATEGORY_PRESETS[prodType] || []).some((c) => c.key === prod.categoryKey);
-    setCustomCategoryMode(!isPreset && Boolean(prod.categoryKey));
-    setProductForm({
-      titleEn: prod.title?.en || '',
-      titleKu: prod.title?.ku || '',
-      titleAr: prod.title?.ar || '',
-      code: prod.code || '',
-      type: prodType,
-      categoryKey: prod.categoryKey || (prodType === 'office' ? 'executive' : 'living'),
-      categoryEn: prod.category?.en || (prodType === 'office' ? 'Executive Desks' : 'Living Room'),
-      categoryKu: prod.category?.ku || (prodType === 'office' ? 'مێزی بەڕێوەبەرایەتی' : 'ژووری میوان و دانیشتن'),
-      categoryAr: prod.category?.ar || (prodType === 'office' ? 'المكاتب التنفيذية' : 'غرفة المعيشة'),
-      dimensions: prod.specs?.dimensions || '',
-      materialsEn: prod.specs?.materials?.en || '',
-      materialsKu: prod.specs?.materials?.ku || '',
-      materialsAr: prod.specs?.materials?.ar || '',
-      shortDescEn: prod.shortDesc?.en || '',
-      shortDescKu: prod.shortDesc?.ku || '',
-      shortDescAr: prod.shortDesc?.ar || '',
-      images: prod.images || ['/images/sofa_cloud_sectional.jpg'],
-      featured: !!prod.featured,
-      isNew: !!prod.isNew,
-      published: prod.published !== false
-    });
-    setIsModalOpen(true);
+    setSelectedProduct(prod);
+    setEditModalOpen(true);
   };
 
-  const handleTypeChange = (newType) => {
-    const defaultPreset = CATEGORY_PRESETS[newType]?.[0] || CATEGORY_PRESETS.home[0];
-    setCustomCategoryMode(false);
-    setProductForm((prev) => ({
-      ...prev,
-      type: newType,
-      categoryKey: defaultPreset.key,
-      categoryEn: defaultPreset.en,
-      categoryKu: defaultPreset.ku,
-      categoryAr: defaultPreset.ar
-    }));
-  };
-
-  const handleCategorySelectChange = (e) => {
-    const val = e.target.value;
-    if (val === '__custom__') {
-      setCustomCategoryMode(true);
-      setProductForm((prev) => ({
-        ...prev,
-        categoryKey: '',
-        categoryEn: '',
-        categoryKu: '',
-        categoryAr: ''
-      }));
-    } else {
-      const preset = (CATEGORY_PRESETS[productForm.type] || []).find((c) => c.key === val);
-      if (preset) {
-        setCustomCategoryMode(false);
-        setProductForm((prev) => ({
-          ...prev,
-          categoryKey: preset.key,
-          categoryEn: preset.en,
-          categoryKu: preset.ku,
-          categoryAr: preset.ar
-        }));
-      }
-    }
-  };
-
-  const processAndSetCoverImage = async (file) => {
-    try {
-      setUploadingImage(true);
-      setImageUploadError('');
-      const result = await optimizeImageFile(file, { maxWidth: 1200, maxHeight: 1200, quality: 0.82 });
-      const currentImgs = [...(productForm.images || [])];
-      currentImgs[0] = result.dataUrl;
-      setProductForm((prev) => ({
-        ...prev,
-        images: currentImgs
-      }));
-    } catch (err) {
-      console.error('Image upload failed:', err);
-      setImageUploadError(err.message || 'Failed to process image');
-    } finally {
-      setUploadingImage(false);
-    }
-  };
-
-  const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    await processAndSetCoverImage(file);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
-  const handleGalleryUpload = async (e) => {
-    const files = Array.from(e.target.files || []);
-    if (!files.length) return;
-    try {
-      setUploadingImage(true);
-      setImageUploadError('');
-      const processed = await Promise.all(
-        files.map((file) => optimizeImageFile(file, { maxWidth: 1200, maxHeight: 1200, quality: 0.82 }))
-      );
-      const newUrls = processed.map((p) => p.dataUrl);
-      setProductForm((prev) => ({
-        ...prev,
-        images: [...(prev.images || []), ...newUrls]
-      }));
-    } catch (err) {
-      console.error('Gallery upload failed:', err);
-      setImageUploadError(err.message || 'Failed to process additional photos');
-    } finally {
-      setUploadingImage(false);
-      if (galleryInputRef.current) galleryInputRef.current.value = '';
-    }
-  };
-
-  const handleRemoveImage = (indexToRemove) => {
-    const updated = (productForm.images || []).filter((_, idx) => idx !== indexToRemove);
-    setProductForm((prev) => ({
-      ...prev,
-      images: updated.length ? updated : ['/category_placeholder.jpg']
-    }));
-  };
-
-  const handleDropImage = async (e) => {
-    e.preventDefault();
-    setIsDraggingOver(false);
-    const file = e.dataTransfer?.files?.[0];
-    if (file) {
-      await processAndSetCoverImage(file);
-    }
-  };
-
-  const handleSaveProduct = (e) => {
-    e.preventDefault();
-    let finalKey = (productForm.categoryKey || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
-    if (!finalKey) {
-      if (productForm.categoryEn) {
-        finalKey = productForm.categoryEn.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      } else {
-        finalKey = productForm.type === 'office' ? 'executive' : 'living';
-      }
-    }
-
-    const defaultPreset = (CATEGORY_PRESETS[productForm.type] || []).find((c) => c.key === finalKey) || {};
-
-    const productPayload = {
-      code: productForm.code,
-      type: productForm.type,
-      categoryKey: finalKey,
-      featured: productForm.featured,
-      isNew: productForm.isNew,
-      published: productForm.published,
-      images: productForm.images,
+  const handleDuplicateProduct = (prod) => {
+    const clone = {
+      ...prod,
+      code: `${prod.code || 'UF'}-COPY`,
       title: {
-        en: productForm.titleEn || 'Modern Furniture Piece',
-        ku: productForm.titleKu || 'مۆدێلی مۆبیلیاتی نوێ',
-        ar: productForm.titleAr || 'قطعة أثاث عصرية'
+        en: `${prod.title?.en || 'Product'} (Copy)`,
+        ku: `${prod.title?.ku || ''} (کۆپی)`,
+        ar: `${prod.title?.ar || ''} (نسخة)`
       },
-      category: {
-        en: productForm.categoryEn || defaultPreset.en || 'Living Room',
-        ku: productForm.categoryKu || defaultPreset.ku || 'ژووری میوان و دانیشتن',
-        ar: productForm.categoryAr || defaultPreset.ar || 'غرفة المعيشة'
-      },
-      shortDesc: {
-        en: productForm.shortDescEn,
-        ku: productForm.shortDescKu,
-        ar: productForm.shortDescAr
-      },
-      fullDesc: {
-        en: productForm.shortDescEn,
-        ku: productForm.shortDescKu,
-        ar: productForm.shortDescAr
-      },
-      specs: {
-        dimensions: productForm.dimensions,
-        materials: {
-          en: productForm.materialsEn,
-          ku: productForm.materialsKu,
-          ar: productForm.materialsAr
-        },
-        warranty: {
-          en: 'Structural Guarantee',
-          ku: 'دەستەبەری پێکهاتە',
-          ar: 'ضمان الهيكل'
-        },
-        customization: {
-          en: 'Custom dimensions and swatches available',
-          ku: 'دەستکاریکردنی قەبارە و ڕەنگ بەردەستە',
-          ar: 'إمكانية التعديل متوفرة'
-        }
-      },
-      swatches: [
-        { name: { en: 'Walnut', ku: 'داری گوێز', ar: 'خشب الجوز' }, color: '#4a3525' },
-        { name: { en: 'Natural Cream', ku: 'کرێمی سروشتی', ar: 'كريمي طبيعي' }, color: '#f3eee6' }
-      ]
+      published: false,
+      featured: false,
+      isNew: true
     };
+    delete clone.id;
+    delete clone.createdAt;
+    addProduct(clone);
+  };
 
-    if (editingProductId) {
-      updateProduct(editingProductId, productPayload);
+  const handleSaveProduct = (formData) => {
+    if (selectedProduct && selectedProduct.id) {
+      updateProduct(selectedProduct.id, formData);
     } else {
-      addProduct(productPayload);
+      addProduct(formData);
     }
+  };
 
-    setIsModalOpen(false);
+  const confirmDelete = () => {
+    if (deleteCandidate) {
+      deleteProduct(deleteCandidate.id);
+      setDeleteCandidate(null);
+    }
   };
 
   const handleSaveSettings = (e) => {
@@ -473,73 +219,42 @@ const AdminDashboard = () => {
         addressEn: settingsForm.addressEn,
         hoursKu: settingsForm.hoursKu,
         hoursAr: settingsForm.hoursAr,
-        hoursEn: settingsForm.hoursEn
+        hoursEn: settingsForm.hoursEn,
+        googleMapsUrl: settingsForm.googleMapsUrl || settings.showroom?.googleMapsUrl,
+        appleMapsUrl: settingsForm.appleMapsUrl || settings.showroom?.appleMapsUrl
       }
     });
+
     setSettingsSaved(true);
     setTimeout(() => setSettingsSaved(false), 3000);
   };
 
   return (
     <div className="admin-layout" style={{ direction: 'ltr' }}>
-      {/* Sidebar */}
+      {/* 1. SIDEBAR */}
       <aside className={`admin-sidebar ${mobileSidebarOpen ? 'is-open' : ''}`}>
-        {/* Logo and Brand */}
-        <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <img
-              src="/brand/unique-logo-dark.svg"
-              alt="Unique Furniture"
-              style={{
-                height: '32px',
-                marginBottom: '0.5rem',
-                display: 'block'
-              }}
-            />
-            <div
-              style={{
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                letterSpacing: '0.08em',
-                color: 'var(--brand-orange)',
-                textTransform: 'uppercase'
-              }}
-            >
-              Showroom CMS
+        <div className="admin-sidebar-header">
+          <div className="admin-brand-mark">
+            <div className="admin-brand-icon">UF</div>
+            <div className="admin-brand-titles">
+              <h1>UNIQUE FURNITURE</h1>
+              <span>Executive Showroom CMS</span>
             </div>
           </div>
           <button
             type="button"
             onClick={() => setMobileSidebarOpen(false)}
             className="admin-menu-toggle"
-            aria-label="Close admin menu"
-            style={{
-              width: '34px',
-              height: '34px',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              border: 'none',
-              color: '#ffffff',
-              borderRadius: '6px'
-            }}
+            aria-label="Close menu"
           >
             <AppIcon name="close" size={16} />
           </button>
         </div>
 
         {/* Navigation items */}
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', flex: 1 }}>
+        <nav className="admin-nav">
           <button
-            onClick={() => {
-              setActiveTab('dashboard');
-              setMobileSidebarOpen(false);
-            }}
-            className={`admin-nav-item ${activeTab === 'dashboard' ? 'is-active' : ''}`}
-          >
-            <AppIcon name="dashboard" size={18} />
-            <span>Dashboard</span>
-          </button>
-
-          <button
+            type="button"
             onClick={() => {
               setActiveTab('products');
               setMobileSidebarOpen(false);
@@ -551,6 +266,19 @@ const AdminDashboard = () => {
           </button>
 
           <button
+            type="button"
+            onClick={() => {
+              setActiveTab('dashboard');
+              setMobileSidebarOpen(false);
+            }}
+            className={`admin-nav-item ${activeTab === 'dashboard' ? 'is-active' : ''}`}
+          >
+            <AppIcon name="dashboard" size={18} />
+            <span>Showroom Overview</span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => {
               setActiveTab('settings');
               setMobileSidebarOpen(false);
@@ -562,36 +290,20 @@ const AdminDashboard = () => {
           </button>
         </nav>
 
-        {/* User and Logout */}
-        <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--brand-orange)',
-                color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 700,
-                fontSize: '0.85rem'
-              }}
-            >
-              UF
+        {/* User profile & Logout */}
+        <div className="admin-user-panel">
+          <div className="admin-user-card">
+            <div className="admin-avatar">
+              {(adminUser.name || 'Admin').slice(0, 2).toUpperCase()}
             </div>
-            <div>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff' }}>
-                {adminUser.name}
-              </div>
-              <div style={{ fontSize: '0.75rem', color: '#a1a1aa' }}>
-                {adminUser.role}
-              </div>
+            <div className="admin-user-info">
+              <span className="admin-user-name">{adminUser.name}</span>
+              <span className="admin-user-role">{adminUser.role}</span>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={() => {
               logout();
               navigate('/admin/login');
@@ -614,683 +326,384 @@ const AdminDashboard = () => {
         />
       )}
 
-      {/* Main Content Area */}
+      {/* 2. MAIN WORKSPACE */}
       <div className="admin-main">
         {/* Topbar */}
         <header className="admin-topbar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+          <div className="admin-topbar-left">
             <button
               type="button"
               onClick={() => setMobileSidebarOpen((prev) => !prev)}
               className="admin-menu-toggle"
-              aria-label="Toggle admin navigation menu"
+              aria-label="Toggle menu"
             >
               <AppIcon name={mobileSidebarOpen ? 'close' : 'menu'} size={18} />
             </button>
-            <h2 style={{ fontSize: 'clamp(0.95rem, 3vw, 1.25rem)', fontWeight: 700, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {activeTab === 'dashboard' && 'Showroom Overview'}
+            <h2 className="admin-topbar-title">
               {activeTab === 'products' && 'Product Catalogue'}
-              {activeTab === 'settings' && 'Showroom Settings'}
+              {activeTab === 'dashboard' && 'Showroom Analytics & Quick View'}
+              {activeTab === 'settings' && 'Showroom Settings & Contact Details'}
             </h2>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
+          <div className="admin-topbar-right">
             <a
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                fontSize: '0.82rem',
-                fontWeight: 600,
-                color: '#0f172a',
-                padding: '0.45rem 0.85rem',
-                backgroundColor: '#f1f5f9',
-                borderRadius: '6px',
-                textDecoration: 'none'
-              }}
+              className="admin-link-website"
             >
-              <span className="desktop-only-block">View Public Showroom</span>
-              <span className="mobile-only-block">Showroom</span>
-              <AppIcon name="external" size={13} />
+              <span>View Website</span>
+              <AppIcon name="external" size={14} />
             </a>
           </div>
         </header>
 
-        {/* Content Body */}
+        {/* Main Body */}
         <main className="admin-content">
-          {/* ================= TAB 1: DASHBOARD OVERVIEW ================= */}
-          {activeTab === 'dashboard' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              {/* Stat Cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: '1rem' }}>
-                <div className="admin-card">
-                  <div style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
-                    Total Products
-                  </div>
-                  <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#0f172a', marginTop: '0.25rem' }}>
-                    {products.length}
-                  </div>
-                  <div style={{ fontSize: '0.8rem', color: '#16a34a', marginTop: '0.25rem' }}>
-                    ✓ Active in catalogue
-                  </div>
-                </div>
-
-                <div className="admin-card">
-                  <div style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
-                    Home Furniture
-                  </div>
-                  <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#0f172a', marginTop: '0.25rem' }}>
-                    {products.filter((p) => p.type === 'home').length}
-                  </div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>
-                    Living, dining, bedroom
-                  </div>
-                </div>
-
-                <div className="admin-card">
-                  <div style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
-                    Office Furniture
-                  </div>
-                  <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#0f172a', marginTop: '0.25rem' }}>
-                    {products.filter((p) => p.type === 'office').length}
-                  </div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>
-                    Executive, meeting, seating
-                  </div>
-                </div>
-
-                <div className="admin-card">
-                  <div style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
-                    Featured Pieces
-                  </div>
-                  <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--brand-orange)', marginTop: '0.25rem' }}>
-                    {products.filter((p) => p.featured).length}
-                  </div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>
-                    Highlighted on homepage
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Actions Card */}
-              <div className="admin-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-                <div>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>
-                    Quick Management Actions
-                  </h3>
-                  <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '0.25rem 0 0' }}>
-                    Add new showroom inventory or manage public contact information.
-                  </p>
-                </div>
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  <button
-                    onClick={() => {
-                      setActiveTab('products');
-                      handleOpenAddModal();
-                    }}
-                    className="btn btn-brand"
-                    style={{
-                      borderRadius: '8px',
-                      fontSize: '0.88rem',
-                      minHeight: '40px',
-                      padding: '0.5rem 1.15rem'
-                    }}
-                  >
-                    <AppIcon name="plus" size={16} />
-                    <span>Add New Furniture</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('settings')}
-                    className="btn btn-secondary"
-                    style={{
-                      borderRadius: '8px',
-                      fontSize: '0.88rem',
-                      minHeight: '40px',
-                      padding: '0.5rem 1.15rem'
-                    }}
-                  >
-                    <AppIcon name="settings" size={16} />
-                    <span>Showroom Settings</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ================= TAB 2: PRODUCT CATALOGUE ================= */}
+          {/* ================= TAB 1: PRODUCT CATALOGUE ================= */}
           {activeTab === 'products' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {/* Top Filter and Search Bar */}
-              <div
-                className="admin-card"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '1rem',
-                  padding: '1rem 1.25rem',
-                  flexWrap: 'wrap'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flex: '1 1 240px', minWidth: 0, flexWrap: 'wrap' }}>
-                  {/* Search */}
-                  <div style={{ position: 'relative', flex: '1 1 180px', minWidth: 0 }}>
-                    <span style={{ position: 'absolute', top: '11px', left: '12px', display: 'flex', alignItems: 'center' }}>
-                      <AppIcon name="search" size={16} color="var(--brand-orange)" />
+            <>
+              {/* 1. Quick KPI Cards (Interactive Filters) */}
+              <div className="admin-kpi-grid">
+                <div
+                  className={`admin-kpi-card ${quickFilter === 'all' ? 'is-active' : ''}`}
+                  onClick={() => setQuickFilter('all')}
+                  title="Click to show all products"
+                >
+                  <div className="admin-kpi-meta">
+                    <span>Total Pieces</span>
+                    <div className="admin-kpi-count">{stats.total}</div>
+                  </div>
+                  <div className="admin-kpi-icon" style={{ backgroundColor: '#f4f4f5', color: '#18181b' }}>
+                    <AppIcon name="package" size={20} />
+                  </div>
+                </div>
+
+                <div
+                  className={`admin-kpi-card ${quickFilter === 'published' ? 'is-active' : ''}`}
+                  onClick={() => setQuickFilter((p) => (p === 'published' ? 'all' : 'published'))}
+                  title="Click to filter published"
+                >
+                  <div className="admin-kpi-meta">
+                    <span>Published on Site</span>
+                    <div className="admin-kpi-count" style={{ color: '#059669' }}>{stats.published}</div>
+                  </div>
+                  <div className="admin-kpi-icon" style={{ backgroundColor: '#ecfdf5', color: '#059669' }}>
+                    <AppIcon name="check" size={20} />
+                  </div>
+                </div>
+
+                <div
+                  className={`admin-kpi-card ${quickFilter === 'featured' ? 'is-active' : ''}`}
+                  onClick={() => setQuickFilter((p) => (p === 'featured' ? 'all' : 'featured'))}
+                  title="Click to filter featured"
+                >
+                  <div className="admin-kpi-meta">
+                    <span>Homepage Featured</span>
+                    <div className="admin-kpi-count" style={{ color: '#d97706' }}>{stats.featured}</div>
+                  </div>
+                  <div className="admin-kpi-icon" style={{ backgroundColor: '#fffbeb', color: '#d97706' }}>
+                    <AppIcon name="star" size={20} />
+                  </div>
+                </div>
+
+                <div
+                  className={`admin-kpi-card ${quickFilter === 'new' ? 'is-active' : ''}`}
+                  onClick={() => setQuickFilter((p) => (p === 'new' ? 'all' : 'new'))}
+                  title="Click to filter new arrivals"
+                >
+                  <div className="admin-kpi-meta">
+                    <span>New Arrivals</span>
+                    <div className="admin-kpi-count" style={{ color: '#ea580c' }}>{stats.newItems}</div>
+                  </div>
+                  <div className="admin-kpi-icon" style={{ backgroundColor: '#fff7ed', color: '#ea580c' }}>
+                    <AppIcon name="ticket-star" size={20} />
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Modern Filter & Action Toolbar */}
+              <div className="admin-toolbar-card">
+                <div className="admin-toolbar-controls">
+                  {/* Search Input (Zero-lag deferred value) */}
+                  <div className="admin-search-wrapper">
+                    <span className="admin-search-icon">
+                      <AppIcon name="search" size={16} />
                     </span>
                     <input
                       type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search name or SKU..."
-                      className="neu-input"
-                      style={{
-                        height: '40px',
-                        paddingLeft: '38px',
-                        paddingRight: '12px',
-                        fontSize: '0.88rem'
-                      }}
+                      value={searchInput}
+                      onChange={(e) => setSearchInput(e.target.value)}
+                      placeholder="Search name, code, category..."
+                      className="admin-search-input"
                     />
+                    {searchInput && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchInput('')}
+                        className="admin-search-clear"
+                        aria-label="Clear search"
+                      >
+                        ×
+                      </button>
+                    )}
                   </div>
 
-                  {/* Type Filter Buttons */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      backgroundColor: 'var(--bg-primary)',
-                      padding: '3px',
-                      borderRadius: '8px',
-                      boxShadow: 'var(--shadow-pressed-subtle)',
-                      border: '1px solid var(--border-subtle)',
-                      flexShrink: 0,
-                      gap: '2px'
-                    }}
-                  >
-                    {['all', 'home', 'office'].map((t) => (
+                  {/* Showroom Type Segmented Control */}
+                  <div className="admin-segmented-control">
+                    {[
+                      { key: 'all', label: 'All' },
+                      { key: 'home', label: 'Home' },
+                      { key: 'office', label: 'Office' }
+                    ].map((item) => (
                       <button
-                        key={t}
-                        onClick={() => handleTypeFilterChange(t)}
-                        style={{
-                          padding: '0.4rem 0.85rem',
-                          borderRadius: '6px',
-                          fontSize: '0.8rem',
-                          fontWeight: typeFilter === t ? 700 : 500,
-                          backgroundColor: typeFilter === t ? '#ffffff' : 'transparent',
-                          color: typeFilter === t ? 'var(--brand-orange)' : 'var(--text-secondary)',
-                          boxShadow: typeFilter === t ? 'var(--shadow-raised-sm)' : 'none',
-                          border: typeFilter === t ? '1px solid var(--border-subtle)' : '1px solid transparent',
-                          cursor: 'pointer',
-                          transition: 'background-color var(--duration-hover) ease, color var(--duration-hover) ease, box-shadow var(--duration-hover) ease'
+                        key={item.key}
+                        type="button"
+                        onClick={() => {
+                          setTypeFilter(item.key);
+                          setCategoryFilter('all');
                         }}
+                        className={`admin-segmented-btn ${typeFilter === item.key ? 'is-selected' : ''}`}
                       >
-                        {t === 'all' ? 'All' : t === 'home' ? 'Home' : 'Office'}
+                        {item.label}
                       </button>
                     ))}
                   </div>
 
                   {/* Category Filter Dropdown */}
-                  <div style={{ flexShrink: 0 }}>
-                    <select
-                      value={categoryFilter}
-                      onChange={(e) => setCategoryFilter(e.target.value)}
-                      aria-label="Filter products by category"
-                      style={{
-                        height: '40px',
-                        padding: '0 0.85rem',
-                        borderRadius: '8px',
-                        fontSize: '0.82rem',
-                        fontWeight: 600,
-                        backgroundColor: categoryFilter === 'all' ? 'var(--bg-primary)' : '#fff7ed',
-                        color: categoryFilter === 'all' ? 'var(--text-secondary)' : 'var(--brand-orange)',
-                        border: categoryFilter === 'all' ? '1px solid var(--border-subtle)' : '1px solid var(--brand-orange)',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <option value="all">All Categories (هەموو بەشەکان)</option>
-                      {availableCategories.map((c) => (
-                        <option key={c.key} value={c.key}>
-                          {c.ku} ({c.en})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    className="admin-category-select"
+                    aria-label="Filter by category"
+                  >
+                    <option value="all">All Categories (هەموو بەشەکان)</option>
+                    {availableCategories.map((c) => (
+                      <option key={c.key} value={c.key}>
+                        {c.ku} ({c.en}) · {c.count}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
+                {/* Add Product Button */}
                 <button
+                  type="button"
                   onClick={handleOpenAddModal}
-                  className="btn btn-brand"
-                  style={{
-                    minHeight: '40px',
-                    padding: '0 1rem',
-                    borderRadius: '8px',
-                    fontSize: '0.88rem',
-                    flexShrink: 0
-                  }}
+                  className="admin-btn-primary"
                 >
                   <AppIcon name="plus" size={16} />
-                  <span>Add Product</span>
+                  <span>+ Add Product</span>
                 </button>
               </div>
 
-              {/* Desktop Table View (screens >= 768px) */}
-              <div className="admin-table-desktop admin-card" style={{ padding: 0, overflow: 'hidden' }}>
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th style={{ width: '80px' }}>Image</th>
-                      <th>Product Title & Code</th>
-                      <th>Type & Category</th>
-                      <th>Visibility</th>
-                      <th>Featured</th>
-                      <th>New</th>
-                      <th style={{ textAlign: 'right', paddingRight: '1.5rem' }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredProducts.length === 0 ? (
+              {/* 3. High-Performance Responsive Table */}
+              <div className="admin-table-container">
+                <div className="admin-table-scroll">
+                  <table className="admin-table">
+                    <thead>
                       <tr>
-                        <td colSpan="7" style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
-                          No furniture pieces found matching your filter.
-                        </td>
+                        <th style={{ width: '70px' }}>Image</th>
+                        <th>Product Title & Code</th>
+                        <th>Type & Category</th>
+                        <th>Visibility</th>
+                        <th>Featured</th>
+                        <th>New</th>
+                        <th style={{ textAlign: 'right', paddingRight: '1.25rem' }}>Actions</th>
                       </tr>
-                    ) : (
-                      filteredProducts.map((prod) => (
-                        <tr key={prod.id}>
-                          <td>
-                            <div
-                              style={{
-                                width: '56px',
-                                height: '56px',
-                                borderRadius: '8px',
-                                overflow: 'hidden',
-                                backgroundColor: '#f1f5f9',
-                                border: '1px solid #e2e8f0'
-                              }}
-                            >
-                              <img
-                                src={prod.images?.[0] || '/images/sofa_cloud_sectional.jpg'}
-                                alt={prod.title?.en}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                              />
-                            </div>
-                          </td>
-
-                          <td>
-                            <div style={{ fontWeight: 700, color: '#0f172a' }}>
-                              {prod.title?.en}
-                            </div>
-                            <div style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', gap: '0.5rem', marginTop: '2px' }}>
-                              <span style={{ fontFamily: 'monospace', color: '#0284c7', fontWeight: 600 }}>
-                                {prod.code}
-                              </span>
-                              <span>·</span>
-                              <span style={{ direction: 'rtl' }}>{prod.title?.ku}</span>
-                            </div>
-                          </td>
-
-                          <td>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
-                              <span
-                                style={{
-                                  display: 'inline-block',
-                                  padding: '2px 8px',
-                                  borderRadius: '4px',
-                                  fontSize: '0.72rem',
-                                  fontWeight: 600,
-                                  backgroundColor: prod.type === 'home' ? '#fef3c7' : '#e0e7ff',
-                                  color: prod.type === 'home' ? '#b45309' : '#3730a3'
-                                }}
-                              >
-                                {prod.type === 'home' ? 'Home' : 'Office'}
-                              </span>
-                              <span
-                                style={{
-                                  display: 'inline-block',
-                                  padding: '2px 8px',
-                                  borderRadius: '4px',
-                                  fontSize: '0.72rem',
-                                  fontWeight: 600,
-                                  backgroundColor: '#f1f5f9',
-                                  color: '#334155'
-                                }}
-                              >
-                                {prod.category?.ku || prod.category?.en || prod.categoryKey}
-                              </span>
-                            </div>
-                            <div style={{ fontSize: '0.76rem', color: '#64748b', marginTop: '3px' }}>
-                              {prod.category?.en}
-                            </div>
-                          </td>
-
-                          <td>
-                            <button
-                              onClick={() => togglePublish(prod.id)}
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '0.35rem',
-                                padding: '3px 8px',
-                                borderRadius: '4px',
-                                fontSize: '0.75rem',
-                                fontWeight: 600,
-                                border: 'none',
-                                cursor: 'pointer',
-                                backgroundColor: prod.published !== false ? '#dcfce7' : '#fee2e2',
-                                color: prod.published !== false ? '#15803d' : '#b91c1c'
-                              }}
-                            >
-                              {prod.published !== false ? (
-                                <>
-                                  <AppIcon name="check" size={13} />
-                                  <span>Published</span>
-                                </>
-                              ) : (
-                                <>
-                                  <AppIcon name="close" size={13} />
-                                  <span>Draft</span>
-                                </>
+                    </thead>
+                    <tbody>
+                      {filteredProducts.length === 0 ? (
+                        <tr>
+                          <td colSpan="7" style={{ textAlign: 'center', padding: '3.5rem 1rem', color: '#71717a' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                              <AppIcon name="search" size={28} />
+                              <span style={{ fontSize: '0.95rem' }}>No furniture pieces match your filter.</span>
+                              {(searchInput || typeFilter !== 'all' || categoryFilter !== 'all' || quickFilter !== 'all') && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setSearchInput('');
+                                    setTypeFilter('all');
+                                    setCategoryFilter('all');
+                                    setQuickFilter('all');
+                                  }}
+                                  style={{
+                                    marginTop: '0.5rem',
+                                    padding: '5px 12px',
+                                    borderRadius: '6px',
+                                    border: '1px solid #d4d4d8',
+                                    background: '#ffffff',
+                                    cursor: 'pointer',
+                                    fontSize: '0.8rem'
+                                  }}
+                                >
+                                  Reset All Filters
+                                </button>
                               )}
-                            </button>
-                          </td>
-
-                          <td>
-                            <button
-                              onClick={() => toggleFeatured(prod.id)}
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                color: prod.featured ? '#f59e0b' : '#cbd5e1'
-                              }}
-                              title={prod.featured ? 'Featured on homepage' : 'Not featured'}
-                            >
-                              <AppIcon name="star" size={17} set={prod.featured ? 'bold' : 'light'} color={prod.featured ? '#f59e0b' : '#cbd5e1'} />
-                            </button>
-                          </td>
-
-                          <td>
-                            <button
-                              onClick={() => toggleNewArrival(prod.id)}
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                              }}
-                              title={prod.isNew ? 'Marked as New' : 'Standard catalog'}
-                            >
-                              <span
-                                style={{
-                                  fontSize: '0.72rem',
-                                  fontWeight: 700,
-                                  padding: '2px 7px',
-                                  borderRadius: '4px',
-                                  backgroundColor: prod.isNew ? 'rgba(255, 102, 0, 0.12)' : '#f1f5f9',
-                                  color: prod.isNew ? 'var(--brand-orange)' : '#94a3b8',
-                                  display: 'inline-block'
-                                }}
-                              >
-                                {prod.isNew ? 'NEW' : '—'}
-                              </span>
-                            </button>
-                          </td>
-
-                          <td style={{ textAlign: 'right', paddingRight: '1.5rem' }}>
-                            <div style={{ display: 'inline-flex', gap: '0.5rem' }}>
-                              <button
-                                onClick={() => handleOpenEditModal(prod)}
-                                style={{
-                                  width: '32px',
-                                  height: '32px',
-                                  borderRadius: '6px',
-                                  backgroundColor: '#f1f5f9',
-                                  color: '#334155',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  cursor: 'pointer'
-                                }}
-                                title="Edit Product"
-                              >
-                                <AppIcon name="edit" size={15} />
-                              </button>
-
-                              <button
-                                onClick={() => {
-                                  if (window.confirm(`Delete ${prod.title?.en}?`)) {
-                                    deleteProduct(prod.id);
-                                  }
-                                }}
-                                style={{
-                                  width: '32px',
-                                  height: '32px',
-                                  borderRadius: '6px',
-                                  backgroundColor: '#fee2e2',
-                                  color: '#dc2626',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  cursor: 'pointer'
-                                }}
-                                title="Delete Product"
-                              >
-                                <AppIcon name="delete" size={15} />
-                              </button>
                             </div>
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                      ) : (
+                        filteredProducts.map((prod) => (
+                          <ProductTableRow
+                            key={prod.id}
+                            product={prod}
+                            onEdit={handleOpenEditModal}
+                            onDuplicate={handleDuplicateProduct}
+                            onDelete={(p) => setDeleteCandidate(p)}
+                            onTogglePublish={togglePublish}
+                            onToggleFeatured={toggleFeatured}
+                            onToggleNew={toggleNewArrival}
+                          />
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Table Footer Summary */}
+                <div
+                  style={{
+                    padding: '0.75rem 1.25rem',
+                    backgroundColor: '#fafaf9',
+                    borderTop: '1px solid #e4e4e7',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    fontSize: '0.78rem',
+                    color: '#71717a'
+                  }}
+                >
+                  <span>
+                    Showing {filteredProducts.length} of {products.length} furniture pieces
+                  </span>
+                  <span>Instant auto-saved to showroom storage</span>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ================= TAB 2: OVERVIEW ================= */}
+          {activeTab === 'dashboard' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div className="admin-toolbar-card" style={{ padding: '1.5rem' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.15rem', color: '#18181b', margin: '0 0 0.35rem' }}>
+                    Showroom Operational Health
+                  </h3>
+                  <p style={{ fontSize: '0.86rem', color: '#71717a', margin: 0 }}>
+                    UNIQUE FURNITURE (Sulaymaniyah) · 48 Years of Bespoke Craftsmanship
+                  </p>
+                </div>
               </div>
 
-              {/* Mobile Cards View (screens < 768px) */}
-              <div className="admin-cards-mobile" style={{ display: 'none' }}>
-                {filteredProducts.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '2.5rem 1rem', color: '#94a3b8', backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                    No furniture pieces found matching your filter.
+              <div className="admin-kpi-grid">
+                <div className="admin-kpi-card" onClick={() => setActiveTab('products')}>
+                  <div className="admin-kpi-meta">
+                    <span>Active Catalog</span>
+                    <div className="admin-kpi-count">{stats.total}</div>
                   </div>
-                ) : (
-                  filteredProducts.map((prod) => (
-                    <div
-                      key={prod.id}
-                      style={{
-                        backgroundColor: '#ffffff',
-                        borderRadius: '12px',
-                        border: '1px solid #e2e8f0',
-                        padding: '1rem',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '0.75rem',
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
-                      }}
-                    >
-                      <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'flex-start' }}>
-                        <div
-                          style={{
-                            width: '64px',
-                            height: '64px',
-                            borderRadius: '8px',
-                            overflow: 'hidden',
-                            backgroundColor: '#f1f5f9',
-                            border: '1px solid #e2e8f0',
-                            flexShrink: 0
-                          }}
-                        >
-                          <img
-                            src={prod.images?.[0] || '/images/sofa_cloud_sectional.jpg'}
-                            alt={prod.title?.en}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                          />
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem', lineHeight: 1.3 }}>
-                            {prod.title?.en}
-                          </div>
-                          <div style={{ fontSize: '0.78rem', color: '#64748b', display: 'flex', gap: '0.4rem', marginTop: '3px', flexWrap: 'wrap' }}>
-                            <span style={{ fontFamily: 'monospace', color: '#0284c7', fontWeight: 600 }}>
-                              {prod.code}
-                            </span>
-                            <span>·</span>
-                            <span style={{ direction: 'rtl' }}>{prod.title?.ku}</span>
-                          </div>
-                          <div style={{ marginTop: '0.4rem', display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                            <span
-                              style={{
-                                padding: '2px 7px',
-                                borderRadius: '4px',
-                                fontSize: '0.72rem',
-                                fontWeight: 600,
-                                backgroundColor: prod.type === 'home' ? '#fef3c7' : '#e0e7ff',
-                                color: prod.type === 'home' ? '#b45309' : '#3730a3'
-                              }}
-                            >
-                              {prod.type === 'home' ? 'Home' : 'Office'}
-                            </span>
-                            <span
-                              style={{
-                                padding: '2px 7px',
-                                borderRadius: '4px',
-                                fontSize: '0.72rem',
-                                fontWeight: 600,
-                                backgroundColor: '#f1f5f9',
-                                color: '#334155'
-                              }}
-                            >
-                              {prod.category?.ku || prod.category?.en || prod.categoryKey}
-                            </span>
-                            {prod.category?.en && prod.category?.ku && (
-                              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                                ({prod.category.en})
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
+                  <div className="admin-kpi-icon" style={{ backgroundColor: '#f4f4f5' }}>
+                    <AppIcon name="package" size={20} />
+                  </div>
+                </div>
 
-                      {/* Mobile Badges and Action Controls */}
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          paddingTop: '0.65rem',
-                          borderTop: '1px solid #f1f5f9',
-                          gap: '0.5rem',
-                          flexWrap: 'wrap'
-                        }}
-                      >
-                        <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-                          <button
-                            onClick={() => togglePublish(prod.id)}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.3rem',
-                              padding: '4px 8px',
-                              borderRadius: '4px',
-                              fontSize: '0.75rem',
-                              fontWeight: 600,
-                              border: 'none',
-                              cursor: 'pointer',
-                              backgroundColor: prod.published !== false ? '#dcfce7' : '#fee2e2',
-                              color: prod.published !== false ? '#15803d' : '#b91c1c'
-                            }}
-                          >
-                            <AppIcon name={prod.published !== false ? 'check' : 'close'} size={12} />
-                            <span>{prod.published !== false ? 'Published' : 'Draft'}</span>
-                          </button>
+                <div className="admin-kpi-card" onClick={() => setActiveTab('products')}>
+                  <div className="admin-kpi-meta">
+                    <span>Published</span>
+                    <div className="admin-kpi-count" style={{ color: '#059669' }}>{stats.published}</div>
+                  </div>
+                  <div className="admin-kpi-icon" style={{ backgroundColor: '#ecfdf5', color: '#059669' }}>
+                    <AppIcon name="check" size={20} />
+                  </div>
+                </div>
 
-                          <button
-                            onClick={() => toggleFeatured(prod.id)}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.25rem',
-                              padding: '4px 8px',
-                              borderRadius: '4px',
-                              fontSize: '0.75rem',
-                              fontWeight: 600,
-                              border: '1px solid #e2e8f0',
-                              background: '#ffffff',
-                              cursor: 'pointer',
-                              color: prod.featured ? '#f59e0b' : '#94a3b8'
-                            }}
-                          >
-                            <AppIcon name="star" size={13} set={prod.featured ? 'bold' : 'light'} color={prod.featured ? '#f59e0b' : '#94a3b8'} />
-                            <span>Featured</span>
-                          </button>
-                        </div>
+                <div className="admin-kpi-card" onClick={() => setActiveTab('products')}>
+                  <div className="admin-kpi-meta">
+                    <span>Featured Pieces</span>
+                    <div className="admin-kpi-count" style={{ color: '#d97706' }}>{stats.featured}</div>
+                  </div>
+                  <div className="admin-kpi-icon" style={{ backgroundColor: '#fffbeb', color: '#d97706' }}>
+                    <AppIcon name="star" size={20} />
+                  </div>
+                </div>
 
-                        <div style={{ display: 'flex', gap: '0.4rem' }}>
-                          <button
-                            onClick={() => handleOpenEditModal(prod)}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.35rem',
-                              padding: '6px 12px',
-                              borderRadius: '6px',
-                              backgroundColor: '#f1f5f9',
-                              color: '#0f172a',
-                              fontSize: '0.82rem',
-                              fontWeight: 600,
-                              border: 'none',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <AppIcon name="edit" size={14} />
-                            <span>Edit</span>
-                          </button>
-
-                          <button
-                            onClick={() => {
-                              if (window.confirm(`Delete ${prod.title?.en}?`)) {
-                                deleteProduct(prod.id);
-                              }
-                            }}
-                            style={{
-                              width: '32px',
-                              height: '32px',
-                              borderRadius: '6px',
-                              backgroundColor: '#fee2e2',
-                              color: '#dc2626',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              border: 'none',
-                              cursor: 'pointer'
-                            }}
-                            title="Delete Product"
-                          >
-                            <AppIcon name="delete" size={15} />
-                          </button>
-                        </div>
-                      </div>
+                <div className="admin-kpi-card" onClick={() => setActiveTab('settings')}>
+                  <div className="admin-kpi-meta">
+                    <span>Showroom WhatsApp</span>
+                    <div className="admin-kpi-count" style={{ fontSize: '1.1rem' }}>
+                      {settings.whatsappDisplay || 'Active'}
                     </div>
-                  ))
-                )}
+                  </div>
+                  <div className="admin-kpi-icon" style={{ backgroundColor: '#ecfdf5', color: '#059669' }}>
+                    <AppIcon name="call" size={20} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Reset to Factory Defaults */}
+              <div
+                style={{
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #e4e4e7',
+                  borderRadius: '12px',
+                  padding: '1.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '1rem',
+                  flexWrap: 'wrap'
+                }}
+              >
+                <div>
+                  <h4 style={{ fontSize: '0.95rem', color: '#18181b', margin: '0 0 0.25rem' }}>
+                    Catalog Factory Reset
+                  </h4>
+                  <p style={{ fontSize: '0.82rem', color: '#71717a', margin: 0 }}>
+                    Restores the original 32 curated furniture pieces and standard showroom phone numbers.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to restore the default catalog? Any custom products will be reset.')) {
+                      resetCatalogToDefaults();
+                    }
+                  }}
+                  style={{
+                    height: '38px',
+                    padding: '0 1rem',
+                    borderRadius: '7px',
+                    border: '1px solid #fecaca',
+                    backgroundColor: '#fff5f5',
+                    color: '#dc2626',
+                    cursor: 'pointer',
+                    fontSize: '0.82rem'
+                  }}
+                >
+                  Reset Catalog to Defaults
+                </button>
               </div>
             </div>
           )}
 
-          {/* ================= TAB 3: SETTINGS ================= */}
+          {/* ================= TAB 3: SHOWROOM SETTINGS ================= */}
           {activeTab === 'settings' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '800px' }}>
-              <div className="admin-card">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+            <div style={{ maxWidth: '820px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div className="admin-toolbar-card" style={{ padding: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                   <div>
-                    <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>
-                      Official Contact & Showroom Details
+                    <h3 style={{ fontSize: '1.15rem', color: '#18181b', margin: '0 0 0.25rem' }}>
+                      Official Showroom & Direct Contact Details
                     </h3>
-                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem', marginBottom: 0 }}>
-                      Changes here directly update all header buttons, contact sheets, and showroom pages.
+                    <p style={{ fontSize: '0.84rem', color: '#71717a', margin: 0 }}>
+                      Changes made here update header call buttons, showroom advisory cards, and map links instantly.
                     </p>
                   </div>
+
                   {settingsSaved && (
                     <div
                       style={{
@@ -1298,885 +711,268 @@ const AdminDashboard = () => {
                         alignItems: 'center',
                         gap: '0.4rem',
                         padding: '4px 10px',
-                        borderRadius: 'var(--radius-sm)',
-                        backgroundColor: 'var(--bg-secondary)',
-                        border: '1px solid var(--border-subtle)',
-                        boxShadow: 'var(--shadow-raised-sm)',
-                        fontSize: '0.84rem',
-                        color: '#16a34a',
-                        fontWeight: 700
+                        borderRadius: '6px',
+                        backgroundColor: '#ecfdf5',
+                        border: '1px solid #a7f3d0',
+                        fontSize: '0.82rem',
+                        color: '#059669'
                       }}
                     >
-                      <AppIcon name="check" size={14} color="#16a34a" />
-                      <span>Saved</span>
+                      <AppIcon name="check" size={14} color="#059669" />
+                      <span>Changes Saved!</span>
                     </div>
                   )}
                 </div>
+              </div>
 
-                <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '1.25rem' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
-                        Local Display Phone
-                      </label>
+              <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {/* Phones & WhatsApp */}
+                <div style={{ backgroundColor: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '12px', padding: '1.5rem' }}>
+                  <h4 style={{ fontSize: '0.95rem', color: '#18181b', margin: '0 0 1rem' }}>
+                    Telephone & WhatsApp Direct Dispatch
+                  </h4>
+                  <div className="admin-form-row">
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Phone Display (Visual)</label>
                       <input
                         type="text"
+                        className="admin-form-input"
                         value={settingsForm.phoneDisplay}
                         onChange={(e) => setSettingsForm({ ...settingsForm, phoneDisplay: e.target.value })}
-                        className="neu-input"
-                        style={{ height: '42px' }}
+                        placeholder="0772 975 4844"
                       />
                     </div>
 
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
-                        Technical Phone (+964...)
-                      </label>
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Phone Dial Link (+964...)</label>
                       <input
                         type="text"
+                        className="admin-form-input"
                         value={settingsForm.phoneTechnical}
                         onChange={(e) => setSettingsForm({ ...settingsForm, phoneTechnical: e.target.value })}
-                        className="neu-input"
-                        style={{ height: '42px' }}
+                        placeholder="+9647729754844"
                       />
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '1.25rem' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
-                        WhatsApp Display Number
-                      </label>
+                  <div className="admin-form-row" style={{ marginTop: '1rem' }}>
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">WhatsApp Display Number</label>
                       <input
                         type="text"
+                        className="admin-form-input"
                         value={settingsForm.whatsappDisplay}
                         onChange={(e) => setSettingsForm({ ...settingsForm, whatsappDisplay: e.target.value })}
-                        className="neu-input"
-                        style={{ height: '42px' }}
+                        placeholder="0772 975 4844"
                       />
                     </div>
 
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
-                        WhatsApp Technical (e.g. 9647729754844)
-                      </label>
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">WhatsApp Clean Number (No +, No spaces)</label>
                       <input
                         type="text"
+                        className="admin-form-input"
                         value={settingsForm.whatsappNumber}
                         onChange={(e) => setSettingsForm({ ...settingsForm, whatsappNumber: e.target.value })}
-                        className="neu-input"
-                        style={{ height: '42px' }}
+                        placeholder="9647729754844"
                       />
                     </div>
                   </div>
+                </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '1.25rem' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
-                        Instagram Handle
-                      </label>
+                {/* Social Media & Maps */}
+                <div style={{ backgroundColor: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '12px', padding: '1.5rem' }}>
+                  <h4 style={{ fontSize: '0.95rem', color: '#18181b', margin: '0 0 1rem' }}>
+                    Instagram & Navigation Maps
+                  </h4>
+                  <div className="admin-form-row">
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Instagram Profile URL</label>
                       <input
                         type="text"
-                        value={settingsForm.instagramHandle}
-                        onChange={(e) => setSettingsForm({ ...settingsForm, instagramHandle: e.target.value })}
-                        className="neu-input"
-                        style={{ height: '42px' }}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
-                        Instagram Full URL
-                      </label>
-                      <input
-                        type="text"
+                        className="admin-form-input"
                         value={settingsForm.instagramUrl}
                         onChange={(e) => setSettingsForm({ ...settingsForm, instagramUrl: e.target.value })}
-                        className="neu-input"
-                        style={{ height: '42px' }}
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Instagram Handle</label>
+                      <input
+                        type="text"
+                        className="admin-form-input"
+                        value={settingsForm.instagramHandle}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, instagramHandle: e.target.value })}
+                        placeholder="@unique.furniture.iq"
                       />
                     </div>
                   </div>
 
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
-                      Showroom Address (Kurdish)
-                    </label>
-                    <input
-                      type="text"
-                      value={settingsForm.addressKu}
-                      onChange={(e) => setSettingsForm({ ...settingsForm, addressKu: e.target.value })}
-                      className="neu-input"
-                      style={{ height: '42px', direction: 'rtl' }}
-                    />
-                  </div>
+                  <div className="admin-form-row" style={{ marginTop: '1rem' }}>
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Google Maps Showroom Link</label>
+                      <input
+                        type="text"
+                        className="admin-form-input"
+                        value={settingsForm.googleMapsUrl}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, googleMapsUrl: e.target.value })}
+                        placeholder="https://maps.google.com/..."
+                      />
+                    </div>
 
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
-                      Showroom Address (Arabic)
-                    </label>
-                    <input
-                      type="text"
-                      value={settingsForm.addressAr}
-                      onChange={(e) => setSettingsForm({ ...settingsForm, addressAr: e.target.value })}
-                      className="neu-input"
-                      style={{ height: '42px', direction: 'rtl' }}
-                    />
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Apple Maps Link</label>
+                      <input
+                        type="text"
+                        className="admin-form-input"
+                        value={settingsForm.appleMapsUrl}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, appleMapsUrl: e.target.value })}
+                        placeholder="https://maps.apple.com/..."
+                      />
+                    </div>
                   </div>
+                </div>
 
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>
-                      Showroom Address (English)
-                    </label>
-                    <input
-                      type="text"
-                      value={settingsForm.addressEn}
-                      onChange={(e) => setSettingsForm({ ...settingsForm, addressEn: e.target.value })}
-                      className="neu-input"
-                      style={{ height: '42px' }}
-                    />
+                {/* Showroom Physical Address (3 Languages) */}
+                <div style={{ backgroundColor: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '12px', padding: '1.5rem' }}>
+                  <h4 style={{ fontSize: '0.95rem', color: '#18181b', margin: '0 0 1rem' }}>
+                    Showroom Physical Address (Sulaymaniyah)
+                  </h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Kurdish Address (Zain)</label>
+                      <input
+                        type="text"
+                        className="admin-form-input"
+                        style={{ direction: 'rtl', fontFamily: 'Zain' }}
+                        value={settingsForm.addressKu}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, addressKu: e.target.value })}
+                        placeholder="ناونیشان بە کوردی"
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">English Address</label>
+                      <input
+                        type="text"
+                        className="admin-form-input"
+                        value={settingsForm.addressEn}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, addressEn: e.target.value })}
+                        placeholder="Sulaymaniyah, Malik Mahmood Circle..."
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Arabic Address</label>
+                      <input
+                        type="text"
+                        className="admin-form-input"
+                        style={{ direction: 'rtl' }}
+                        value={settingsForm.addressAr}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, addressAr: e.target.value })}
+                        placeholder="العنوان بالعربية"
+                      />
+                    </div>
                   </div>
+                </div>
 
-                  <button
-                    type="submit"
-                    className="btn btn-brand"
-                    style={{
-                      width: '100%',
-                      minHeight: '46px',
-                      borderRadius: '8px',
-                      fontWeight: 700,
-                      fontSize: '0.92rem',
-                      marginTop: '1rem'
-                    }}
-                  >
-                    <AppIcon name="save" size={17} />
-                    <span>Save Configuration</span>
+                {/* Opening Hours */}
+                <div style={{ backgroundColor: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '12px', padding: '1.5rem' }}>
+                  <h4 style={{ fontSize: '0.95rem', color: '#18181b', margin: '0 0 1rem' }}>
+                    Showroom Opening Hours
+                  </h4>
+                  <div className="admin-form-row">
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Kurdish Hours</label>
+                      <input
+                        type="text"
+                        className="admin-form-input"
+                        style={{ direction: 'rtl', fontFamily: 'Zain' }}
+                        value={settingsForm.hoursKu}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, hoursKu: e.target.value })}
+                        placeholder="شەممە بۆ پێنجشەممە ۹ بەیانی - ۹ شەو"
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">English Hours</label>
+                      <input
+                        type="text"
+                        className="admin-form-input"
+                        value={settingsForm.hoursEn}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, hoursEn: e.target.value })}
+                        placeholder="Mon - Sat: 9:00 AM - 9:00 PM"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+                  <button type="submit" className="admin-btn-primary" style={{ height: '44px', padding: '0 2rem' }}>
+                    Save All Settings
                   </button>
-                </form>
-              </div>
-
-              {/* Reset Defaults Warning */}
-              <div className="admin-card" style={{ border: '1px solid #fecaca', backgroundColor: '#fff5f5' }}>
-                <h4 style={{ color: '#b91c1c', margin: '0 0 0.5rem' }}>Factory Reset Catalog</h4>
-                <p style={{ fontSize: '0.85rem', color: '#7f1d1d', margin: 0, marginBottom: '1rem' }}>
-                  Reset all products and business numbers back to initial project state. Use only if necessary.
-                </p>
-                <button
-                  onClick={() => {
-                    if (window.confirm('Reset all catalog modifications back to defaults?')) {
-                      resetCatalogToDefaults();
-                      alert('Catalog reset to factory defaults.');
-                    }
-                  }}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    backgroundColor: '#dc2626',
-                    color: '#ffffff',
-                    borderRadius: '6px',
-                    fontSize: '0.82rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.35rem'
-                  }}
-                >
-                  <AppIcon name="reset" size={14} />
-                  <span>Reset to Defaults</span>
-                </button>
-              </div>
+                </div>
+              </form>
             </div>
           )}
         </main>
       </div>
 
-      {/* ================= ADD / EDIT PRODUCT MODAL ================= */}
-      {isModalOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(4px)',
-            zIndex: 400,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 'clamp(0.75rem, 3vw, 1.5rem)'
-          }}
-          onClick={() => setIsModalOpen(false)}
-        >
+      {/* 3. RICH PRODUCT EDIT / ADD MODAL */}
+      <ProductEditModal
+        isOpen={editModalOpen}
+        product={selectedProduct}
+        onClose={() => setEditModalOpen(false)}
+        onSave={handleSaveProduct}
+      />
+
+      {/* 4. DELETE CONFIRMATION MODAL */}
+      {deleteCandidate && (
+        <div className="admin-modal-backdrop" onClick={() => setDeleteCandidate(null)}>
           <div
-            style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '16px',
-              maxWidth: '720px',
-              width: '100%',
-              maxHeight: 'min(90dvh, 850px)',
-              display: 'flex',
-              flexDirection: 'column',
-              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
-              overflow: 'hidden'
-            }}
+            className="admin-modal-container"
+            style={{ maxWidth: '440px', padding: '1.5rem' }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header */}
-            <div
-              style={{
-                padding: '1rem clamp(1rem, 3vw, 1.75rem)',
-                borderBottom: '1px solid #e2e8f0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}
-            >
-              <div>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>
-                  {editingProductId ? 'Edit Furniture Piece' : 'Add New Furniture Piece'}
-                </h3>
-                <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
-                  Showroom Catalog · Strictly No Public Prices
-                </span>
-              </div>
+            <h3 style={{ fontSize: '1.15rem', color: '#18181b', margin: '0 0 0.5rem' }}>
+              Delete Furniture Piece?
+            </h3>
+            <p style={{ fontSize: '0.86rem', color: '#71717a', margin: '0 0 1.25rem', lineHeight: 1.6 }}>
+              Are you sure you want to remove <strong>{deleteCandidate.title?.en || deleteCandidate.code}</strong> from the catalog? This action will permanently remove it from the website.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
               <button
-                onClick={() => setIsModalOpen(false)}
+                type="button"
+                onClick={() => setDeleteCandidate(null)}
                 style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: 'var(--radius-sm)',
-                  backgroundColor: '#f1f5f9',
-                  border: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer'
+                  height: '38px',
+                  padding: '0 1rem',
+                  borderRadius: '7px',
+                  border: '1px solid #d4d4d8',
+                  background: '#ffffff',
+                  cursor: 'pointer',
+                  fontSize: '0.84rem'
                 }}
               >
-                <AppIcon name="close" size={16} />
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDelete}
+                style={{
+                  height: '38px',
+                  padding: '0 1.25rem',
+                  borderRadius: '7px',
+                  border: '1px solid #dc2626',
+                  backgroundColor: '#dc2626',
+                  color: '#ffffff',
+                  cursor: 'pointer',
+                  fontSize: '0.84rem'
+                }}
+              >
+                Delete Piece
               </button>
             </div>
-
-            {/* Modal Form Body */}
-            <form onSubmit={handleSaveProduct} style={{ overflowY: 'auto', padding: 'clamp(1rem, 3vw, 1.75rem)', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              {/* Section 1: Basic Identification & Category */}
-              <div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.75rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.4rem' }}>
-                  1. Basic Information & Category (بەش)
-                </h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '1rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>
-                      Model Code / SKU
-                    </label>
-                    <input
-                      type="text"
-                      value={productForm.code}
-                      onChange={(e) => setProductForm({ ...productForm, code: e.target.value })}
-                      required
-                      style={{ width: '100%', height: '40px', padding: '0 10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>
-                      Showroom Type (جۆری بەش)
-                    </label>
-                    <select
-                      value={productForm.type}
-                      onChange={(e) => handleTypeChange(e.target.value)}
-                      style={{ width: '100%', height: '40px', padding: '0 10px', borderRadius: '6px', border: '1px solid #cbd5e1', backgroundColor: '#ffffff', fontWeight: 600 }}
-                    >
-                      <option value="home">Home Furniture (مۆبیلیاتی ماڵ)</option>
-                      <option value="office">Office Furniture (مۆبیلیاتی ئۆفیس)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>
-                      Category / بەشی تایبەت <span style={{ color: 'var(--brand-orange)' }}>*</span>
-                    </label>
-                    <select
-                      value={customCategoryMode ? '__custom__' : productForm.categoryKey}
-                      onChange={handleCategorySelectChange}
-                      style={{
-                        width: '100%',
-                        height: '40px',
-                        padding: '0 10px',
-                        borderRadius: '6px',
-                        border: '1px solid #cbd5e1',
-                        backgroundColor: '#ffffff',
-                        fontWeight: 600,
-                        color: '#0f172a'
-                      }}
-                    >
-                      <optgroup label={productForm.type === 'home' ? 'Home Categories (بەشەکانی ماڵ)' : 'Office Categories (بەشەکانی ئۆفیس)'}>
-                        {(CATEGORY_PRESETS[productForm.type] || []).map((preset) => (
-                          <option key={preset.key} value={preset.key}>
-                            {preset.ku} — {preset.en}
-                          </option>
-                        ))}
-                      </optgroup>
-                      <optgroup label="Custom / بەشێکی تر">
-                        <option value="__custom__">➕ Custom Category / بەشێکی تر...</option>
-                      </optgroup>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Category preview and custom fields */}
-                <div
-                  style={{
-                    marginTop: '0.75rem',
-                    padding: '0.85rem 1rem',
-                    backgroundColor: customCategoryMode ? '#fffbeb' : '#f8fafc',
-                    borderRadius: '8px',
-                    border: customCategoryMode ? '1px solid #fde68a' : '1px solid #e2e8f0'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: customCategoryMode ? '0.75rem' : '0' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                        Selected Category:
-                      </span>
-                      <span
-                        style={{
-                          fontSize: '0.82rem',
-                          fontWeight: 700,
-                          color: 'var(--brand-orange)',
-                          backgroundColor: '#ffffff',
-                          padding: '3px 10px',
-                          borderRadius: '6px',
-                          border: '1px solid #fed7aa',
-                          boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
-                        }}
-                      >
-                        {productForm.categoryKu || '(Not set)'}
-                      </span>
-                      <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                        · {productForm.categoryAr || '(العربية)'} · {productForm.categoryEn || '(English)'}
-                      </span>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => setCustomCategoryMode((prev) => !prev)}
-                      style={{
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        color: '#0284c7',
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        textDecoration: 'underline'
-                      }}
-                    >
-                      {customCategoryMode ? '✓ Done Editing Category' : '✏️ Edit / Customize Category Names'}
-                    </button>
-                  </div>
-
-                  {/* Expanded Category Customization Inputs */}
-                  {customCategoryMode && (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: '0.75rem', paddingTop: '0.5rem', borderTop: '1px dashed #e2e8f0' }}>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, color: '#475569', marginBottom: '0.2rem' }}>
-                          Kurdish Name (ناوی بەش بە کوردی) <span style={{ color: '#ef4444' }}>*</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={productForm.categoryKu}
-                          onChange={(e) => setProductForm({ ...productForm, categoryKu: e.target.value })}
-                          placeholder="وەک: ژووری میوان و دانیشتن"
-                          style={{ width: '100%', height: '36px', padding: '0 8px', borderRadius: '6px', border: '1px solid #cbd5e1', direction: 'rtl', fontSize: '0.82rem' }}
-                          required={customCategoryMode}
-                        />
-                      </div>
-
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, color: '#475569', marginBottom: '0.2rem' }}>
-                          Arabic Name (اسم الفئة بالعربية)
-                        </label>
-                        <input
-                          type="text"
-                          value={productForm.categoryAr}
-                          onChange={(e) => setProductForm({ ...productForm, categoryAr: e.target.value })}
-                          placeholder="مثل: غرفة المعيشة"
-                          style={{ width: '100%', height: '36px', padding: '0 8px', borderRadius: '6px', border: '1px solid #cbd5e1', direction: 'rtl', fontSize: '0.82rem' }}
-                        />
-                      </div>
-
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, color: '#475569', marginBottom: '0.2rem' }}>
-                          English Name
-                        </label>
-                        <input
-                          type="text"
-                          value={productForm.categoryEn}
-                          onChange={(e) => setProductForm({ ...productForm, categoryEn: e.target.value })}
-                          placeholder="e.g. Living Room"
-                          style={{ width: '100%', height: '36px', padding: '0 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.82rem' }}
-                        />
-                      </div>
-
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, color: '#475569', marginBottom: '0.2rem' }}>
-                          Category Key / ID (Slug)
-                        </label>
-                        <input
-                          type="text"
-                          value={productForm.categoryKey}
-                          onChange={(e) => setProductForm({ ...productForm, categoryKey: e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, '') })}
-                          placeholder="e.g. living, dining, bedroom"
-                          style={{ width: '100%', height: '36px', padding: '0 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.82rem', fontFamily: 'monospace' }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div style={{ marginTop: '0.75rem' }}>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>
-                    Title (English)
-                  </label>
-                  <input
-                    type="text"
-                    value={productForm.titleEn}
-                    onChange={(e) => setProductForm({ ...productForm, titleEn: e.target.value })}
-                    required
-                    placeholder="e.g. Cloud Modular Sectional Sofa"
-                    style={{ width: '100%', height: '40px', padding: '0 10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                  />
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '1rem', marginTop: '0.75rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>
-                      Title (Kurdish Sorani)
-                    </label>
-                    <input
-                      type="text"
-                      value={productForm.titleKu}
-                      onChange={(e) => setProductForm({ ...productForm, titleKu: e.target.value })}
-                      placeholder="ناوی بەرهەم بە کوردی"
-                      style={{ width: '100%', height: '40px', padding: '0 10px', borderRadius: '6px', border: '1px solid #cbd5e1', direction: 'rtl' }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>
-                      Title (Arabic)
-                    </label>
-                    <input
-                      type="text"
-                      value={productForm.titleAr}
-                      onChange={(e) => setProductForm({ ...productForm, titleAr: e.target.value })}
-                      placeholder="اسم المنتج بالعربية"
-                      style={{ width: '100%', height: '40px', padding: '0 10px', borderRadius: '6px', border: '1px solid #cbd5e1', direction: 'rtl' }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Section 2: Photography & Media */}
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.4rem', marginBottom: '0.85rem' }}>
-                  <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                    2. Photography & Cover Image (وێنەی بەرهەم)
-                  </h4>
-                  <span style={{ fontSize: '0.76rem', color: '#64748b' }}>
-                    Direct device upload from phone or computer
-                  </span>
-                </div>
-
-                {imageUploadError && (
-                  <div style={{ padding: '0.6rem 0.85rem', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', color: '#dc2626', fontSize: '0.82rem', marginBottom: '0.75rem' }}>
-                    {imageUploadError}
-                  </div>
-                )}
-
-                {/* Primary Cover Image Box */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '1rem', alignItems: 'start', marginBottom: '1rem' }}>
-                  {/* Image Preview & Details */}
-                  <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.85rem' }}>
-                    <div style={{ fontSize: '0.78rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span>Current Cover Image</span>
-                      {uploadingImage && <span style={{ color: 'var(--brand-orange)', fontSize: '0.74rem' }}>Processing...</span>}
-                    </div>
-
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '180px',
-                        borderRadius: '6px',
-                        overflow: 'hidden',
-                        backgroundColor: '#e2e8f0',
-                        position: 'relative',
-                        boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.05)'
-                      }}
-                    >
-                      <img
-                        src={productForm.images[0] || '/category_placeholder.jpg'}
-                        alt="Product Cover"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="btn btn-secondary"
-                        disabled={uploadingImage}
-                        style={{ flex: 1, fontSize: '0.8rem', minHeight: '36px', padding: '0 0.5rem', justifyContent: 'center' }}
-                      >
-                        <AppIcon name="image" size={15} />
-                        <span>Change Photo</span>
-                      </button>
-
-                      {productForm.images.length > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImage(0)}
-                          style={{
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '6px',
-                            backgroundColor: '#fee2e2',
-                            color: '#dc2626',
-                            border: 'none',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0
-                          }}
-                          title="Remove cover photo"
-                        >
-                          <AppIcon name="delete" size={15} />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Drag & Drop Upload Zone */}
-                  <div>
-                    {/* Hidden Native File Input for Mobile & Desktop */}
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      style={{ display: 'none' }}
-                    />
-                    <input
-                      ref={galleryInputRef}
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleGalleryUpload}
-                      style={{ display: 'none' }}
-                    />
-
-                    <div
-                      onDragOver={(e) => { e.preventDefault(); setIsDraggingOver(true); }}
-                      onDragLeave={() => setIsDraggingOver(false)}
-                      onDrop={handleDropImage}
-                      onClick={() => fileInputRef.current?.click()}
-                      style={{
-                        border: isDraggingOver ? '2px dashed var(--brand-orange)' : '2px dashed #cbd5e1',
-                        backgroundColor: isDraggingOver ? '#fff7ed' : '#ffffff',
-                        borderRadius: '8px',
-                        padding: '1.5rem 1rem',
-                        textAlign: 'center',
-                        cursor: 'pointer',
-                        transition: 'border-color 0.15s ease, background-color 0.15s ease',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5rem',
-                        minHeight: '180px'
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: '48px',
-                          height: '48px',
-                          borderRadius: '50%',
-                          backgroundColor: '#fff7ed',
-                          color: 'var(--brand-orange)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}
-                      >
-                        <AppIcon name="external" size={24} />
-                      </div>
-                      <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.92rem' }}>
-                        Click to Upload from Device
-                      </div>
-                      <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
-                        یان وێنەیەک ڕابکێشە ئێرە (Drag & Drop)
-                      </div>
-                      <span
-                        style={{
-                          display: 'inline-block',
-                          fontSize: '0.72rem',
-                          fontWeight: 600,
-                          backgroundColor: '#f1f5f9',
-                          color: '#475569',
-                          padding: '3px 8px',
-                          borderRadius: '4px',
-                          marginTop: '0.2rem'
-                        }}
-                      >
-                        JPG, PNG, WEBP · Auto-compressed for speed
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Additional Gallery Photos */}
-                {productForm.images.length > 1 && (
-                  <div style={{ marginBottom: '1rem', backgroundColor: '#f8fafc', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                    <div style={{ fontSize: '0.78rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>
-                      Additional Gallery Images ({productForm.images.length - 1} extra photos):
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                      {productForm.images.slice(1).map((imgUrl, idx) => (
-                        <div
-                          key={idx + 1}
-                          style={{
-                            width: '60px',
-                            height: '60px',
-                            borderRadius: '6px',
-                            overflow: 'hidden',
-                            position: 'relative',
-                            border: '1px solid #cbd5e1'
-                          }}
-                        >
-                          <img src={imgUrl} alt="extra view" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveImage(idx + 1)}
-                            style={{
-                              position: 'absolute',
-                              top: '2px',
-                              right: '2px',
-                              width: '18px',
-                              height: '18px',
-                              borderRadius: '50%',
-                              backgroundColor: 'rgba(0,0,0,0.65)',
-                              color: '#ffffff',
-                              border: 'none',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '11px',
-                              lineHeight: 1
-                            }}
-                            title="Remove this photo"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                      <button
-                        type="button"
-                        onClick={() => galleryInputRef.current?.click()}
-                        style={{
-                          width: '60px',
-                          height: '60px',
-                          borderRadius: '6px',
-                          border: '1px dashed #94a3b8',
-                          backgroundColor: '#ffffff',
-                          color: '#475569',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '2px',
-                          fontSize: '0.7rem',
-                          fontWeight: 600
-                        }}
-                      >
-                        <AppIcon name="plus" size={16} />
-                        <span>Add</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Showroom Library Presets */}
-                <div style={{ marginBottom: '0.75rem' }}>
-                  <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '0.4rem', fontWeight: 600 }}>
-                    Or quick-pick from showroom collection:
-                  </div>
-                  <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.4rem' }}>
-                    {AVAILABLE_SHOWROOM_IMAGES.map((img) => (
-                      <button
-                        type="button"
-                        key={img}
-                        onClick={() => setProductForm({ ...productForm, images: [img] })}
-                        style={{
-                          width: '56px',
-                          height: '56px',
-                          borderRadius: '6px',
-                          overflow: 'hidden',
-                          border: productForm.images[0] === img ? '2px solid var(--brand-orange)' : '1px solid #cbd5e1',
-                          padding: 0,
-                          cursor: 'pointer',
-                          flexShrink: 0
-                        }}
-                        title="Select this showroom image"
-                      >
-                        <img src={img} alt="preset" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Collapsible Web Link (URL) Input */}
-                <div style={{ borderTop: '1px dashed #e2e8f0', paddingTop: '0.5rem' }}>
-                  <button
-                    type="button"
-                    onClick={() => setShowUrlInput((prev) => !prev)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#64748b',
-                      fontSize: '0.78rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.35rem',
-                      padding: 0
-                    }}
-                  >
-                    <span>{showUrlInput ? '▼ Hide web link input' : '▶ Advanced: Paste an image link (URL / بەستەری ئۆنلاین)'}</span>
-                  </button>
-
-                  {showUrlInput && (
-                    <div style={{ marginTop: '0.5rem', backgroundColor: '#f8fafc', padding: '0.75rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                      <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>
-                        Image Web Link (URL)
-                      </label>
-                      <input
-                        type="text"
-                        value={productForm.images[0] || ''}
-                        onChange={(e) => {
-                          const newImgs = [...productForm.images];
-                          newImgs[0] = e.target.value;
-                          setProductForm({ ...productForm, images: newImgs });
-                        }}
-                        placeholder="e.g. https://images.unsplash.com/... or /images/sofa.jpg"
-                        style={{ width: '100%', height: '36px', padding: '0 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.82rem' }}
-                      />
-                      <span style={{ fontSize: '0.72rem', color: '#64748b', display: 'block', marginTop: '0.3rem' }}>
-                        Only needed if your photo is already hosted on the web. For local files from your phone or PC, use "Click to Upload" above.
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Section 3: Dimensions & Craftsmanship */}
-              <div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.75rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.4rem' }}>
-                  3. Specifications & Materials
-                </h4>
-                <div style={{ marginBottom: '0.75rem' }}>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>
-                    Dimensions (W × D × H)
-                  </label>
-                  <input
-                    type="text"
-                    value={productForm.dimensions}
-                    onChange={(e) => setProductForm({ ...productForm, dimensions: e.target.value })}
-                    style={{ width: '100%', height: '40px', padding: '0 10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>
-                    Materials Description
-                  </label>
-                  <input
-                    type="text"
-                    value={productForm.materialsEn}
-                    onChange={(e) => setProductForm({ ...productForm, materialsEn: e.target.value })}
-                    style={{ width: '100%', height: '40px', padding: '0 10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-                  />
-                </div>
-              </div>
-
-              {/* Section 4: Visibility Flags */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', padding: '1rem', backgroundColor: '#f8fafc', borderRadius: '8px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>
-                  <input
-                    type="checkbox"
-                    checked={productForm.published}
-                    onChange={(e) => setProductForm({ ...productForm, published: e.target.checked })}
-                  />
-                  <span>Published (Show in Showroom)</span>
-                </label>
-
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>
-                  <input
-                    type="checkbox"
-                    checked={productForm.featured}
-                    onChange={(e) => setProductForm({ ...productForm, featured: e.target.checked })}
-                  />
-                  <span>Featured on Homepage</span>
-                </label>
-
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>
-                  <input
-                    type="checkbox"
-                    checked={productForm.isNew}
-                    onChange={(e) => setProductForm({ ...productForm, isNew: e.target.checked })}
-                  />
-                  <span>New Arrival Badge</span>
-                </label>
-              </div>
-
-              {/* Submit Buttons */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  style={{
-                    padding: '0.65rem 1.25rem',
-                    backgroundColor: '#f1f5f9',
-                    color: '#475569',
-                    borderRadius: '8px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    border: 'none'
-                  }}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  style={{
-                    padding: '0.65rem 1.5rem',
-                    backgroundColor: 'var(--brand-orange)',
-                    color: '#ffffff',
-                    borderRadius: '8px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    border: 'none',
-                    boxShadow: '0 2px 8px rgba(255, 102, 0, 0.25)'
-                  }}
-                >
-                  {editingProductId ? 'Update Piece' : 'Add to Catalog'}
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}

@@ -4,11 +4,14 @@ import { useRouter, Link } from '../context/RouterContext';
 import { useCatalog } from '../context/CatalogContext';
 import ProductCard from '../components/ProductCard';
 import CollectionFilters from '../components/ui/CollectionFilters';
+import { WhatsAppIcon } from '../components/Icons';
 import { getGeneralWhatsAppUrl } from '../config/businessInfo';
 import useScrollReveal from '../hooks/useScrollReveal';
 
 const labels = {
   en: {
+    introPart1: 'Our products are made to last.',
+    introPart2: 'Take your time exploring.',
     intro: 'Our products are made to last. Take your time exploring.',
     sort: 'Sort by',
     featured: 'Featured',
@@ -17,11 +20,15 @@ const labels = {
     count: 'pieces',
     clear: 'Clear filters',
     empty: 'No pieces match these filters.',
+    kicker: 'Unique Furniture · Showroom Advisory',
     help: 'Need help choosing?',
     advice: 'Explore materials, finishes, and custom dimensions with our showroom team in Sulaymaniyah.',
-    note: 'Contact us directly on WhatsApp for availability and personalized showroom visits.'
+    note: 'Contact us directly on WhatsApp for availability and personalized showroom visits.',
+    response: 'Quick response · Sulaymaniyah Showroom'
   },
   ar: {
+    introPart1: 'منتجاتنا صُنعت لتدوم.',
+    introPart2: 'خذ وقتك في الاستكشاف.',
     intro: 'منتجاتنا صُنعت لتدوم. خذ وقتك في الاستكشاف.',
     sort: 'ترتيب حسب',
     featured: 'المميزة',
@@ -30,11 +37,15 @@ const labels = {
     count: 'قطع',
     clear: 'مسح الفلاتر',
     empty: 'لا توجد قطع تطابق هذه الفلاتر.',
+    kicker: 'أثاث يۆنیک · استشارة صالة العرض',
     help: 'تحتاج مساعدة في الاختيار؟',
     advice: 'اكتشف المواد والتشطيبات والأبعاد المخصصة مع فريق صالة العرض في السليمانية.',
-    note: 'تواصل معنا مباشرة عبر واتساب للتحقق من التوفر وترتيب زيارة صالة العرض.'
+    note: 'تواصل معنا مباشرة عبر واتساب للتحقق من التوفر وترتيب زيارة صالة العرض.',
+    response: 'استجابة سريعة · صالة عرض السليمانية'
   },
   ku: {
+    introPart1: 'بەرهەمەکانمان بۆ مانەوە دروستکراون.',
+    introPart2: 'کاتی خۆت وەربگرە بۆ گەڕان.',
     intro: 'بەرهەمەکانمان بۆ مانەوە دروستکراون. کاتی خۆت وەربگرە بۆ گەڕان.',
     sort: 'ڕیزکردن بەپێی',
     featured: 'هەڵبژێردراوەکان',
@@ -43,9 +54,11 @@ const labels = {
     count: 'پارچە',
     clear: 'پاککردنەوەی فلتەرەکان',
     empty: 'هیچ پارچەیەک لەگەڵ ئەم فلتەرانە ناگونجێت.',
+    kicker: 'یۆنیک مۆبیلیات · ڕاوێژکاری پێشانگا',
     help: 'پێویستت بە یارمەتییە بۆ هەڵبژاردن؟',
     advice: 'لەگەڵ تیمی پێشانگای یۆنیک لە سلێمانی کەرەستە و قەبارە تایبەتەکان ببینە.',
-    note: 'بۆ زانیاری زیاتر و سەردانی پێشانگا ڕاستەوخۆ لە واتساپ پەیوەندیمان پێوە بکە.'
+    note: 'بۆ زانیاری زیاتر و سەردانی پێشانگا ڕاستەوخۆ لە واتساپ پەیوەندیمان پێوە بکە.',
+    response: 'وەڵامدانەوەی خێرا · پێشانگای سلێمانی'
   }
 };
 
@@ -181,8 +194,9 @@ export default function Catalogue({ type: routeType = 'all' }) {
       {/* Breadcrumb Navigation with Multi-tier Hierarchy */}
       <nav className="catalogue-breadcrumb" aria-label={t.nav.home}>
         <Link href="/">{t.nav.home}</Link>
-        <span aria-hidden="true">/</span>
+        <span aria-hidden="true" className="breadcrumb-separator">/</span>
         <span
+          className="breadcrumb-item"
           style={{ cursor: activeCategory !== 'all' || activeSubcategory !== 'all' ? 'pointer' : 'default' }}
           onClick={activeCategory !== 'all' || activeSubcategory !== 'all' ? handleClearAll : undefined}
         >
@@ -190,7 +204,7 @@ export default function Catalogue({ type: routeType = 'all' }) {
         </span>
         {activeCategory !== 'all' && (
           <>
-            <span aria-hidden="true">/</span>
+            <span aria-hidden="true" className="breadcrumb-separator">/</span>
             <span
               className="breadcrumb-subtag"
               style={{ cursor: activeSubcategory !== 'all' ? 'pointer' : 'default' }}
@@ -202,7 +216,7 @@ export default function Catalogue({ type: routeType = 'all' }) {
         )}
         {activeSubcategory !== 'all' && (
           <>
-            <span aria-hidden="true">/</span>
+            <span aria-hidden="true" className="breadcrumb-separator">/</span>
             <span className="breadcrumb-subtag">
               {categoryLabels[activeSubcategory] || activeSubcategory}
             </span>
@@ -212,7 +226,12 @@ export default function Catalogue({ type: routeType = 'all' }) {
 
       {/* Floema Editorial Heading */}
       <header className="floema-page-header">
-        <h1 className="floema-page-headline">{text.intro}</h1>
+        <h1 className="floema-page-headline">
+          <span className="floema-headline-sentence">{text.introPart1 || text.intro}</span>
+          {text.introPart2 && (
+            <span className="floema-headline-sentence floema-headline-sub">{text.introPart2}</span>
+          )}
+        </h1>
       </header>
 
       {/* Hierarchical Category & Subcategory Filter Bar */}
@@ -306,7 +325,10 @@ export default function Catalogue({ type: routeType = 'all' }) {
       <aside className="catalogue-consultation" aria-labelledby="showroom-help-heading">
         <div className="catalogue-consultation-inner">
           <div className="catalogue-consultation-copy">
-            <span className="consultation-kicker">{t.brandName}</span>
+            <div className="consultation-kicker-wrap">
+              <span className="consultation-kicker-dot" />
+              <span className="consultation-kicker">{text.kicker || t.brandName}</span>
+            </div>
             <h2 id="showroom-help-heading">{text.help}</h2>
             <p>{text.advice}</p>
             <p className="consultation-note">{text.note}</p>
@@ -316,10 +338,14 @@ export default function Catalogue({ type: routeType = 'all' }) {
               href={getGeneralWhatsAppUrl(lang, (settings || {}).whatsappNumber)}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-primary"
+              className="btn-consultation-whatsapp"
             >
-              {t.nav.whatsAppCta || 'WhatsApp Showroom'}
+              <WhatsAppIcon size={20} color="#25d366" />
+              <span>{t.nav.whatsAppCta || 'WhatsApp Showroom'}</span>
             </a>
+            <span className="consultation-status">
+              <span>{text.response}</span>
+            </span>
           </div>
         </div>
       </aside>

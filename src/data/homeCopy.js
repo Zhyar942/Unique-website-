@@ -13,6 +13,7 @@ export const homeCopy = {
     empty: 'New pieces are on their way. Explore our full collection or speak with our team.',
     scrollHint: 'Scroll to explore',
     badge: 'SINCE 1978\nSULAYMANIYAH',
+    badgeLabel: 'SINCE 1978 · SULAYMANIYAH',
     footer: {
       aboutTitle: 'Our Heritage',
       aboutText: 'Crafting bespoke home & office furniture in Sulaymaniyah since 1978. Timeless design, honest materials, and bespoke craftsmanship.',
@@ -39,6 +40,7 @@ export const homeCopy = {
     empty: 'قطع جديدة في الطريق. اكتشف تشكيلتنا الكاملة أو تحدث مع فريقنا.',
     scrollHint: 'مرر للاستكشاف',
     badge: 'SINCE 1978\nالسليمانية',
+    badgeLabel: 'عراقة منذ عام ١٩٧٨ · السليمانية',
     footer: {
       aboutTitle: 'عراقتنا',
       aboutText: 'منذ عام ١٩٧٨، رواد في تصميم وصناعة الأثاث الفاخر للمنازل والمكاتب في السليمانية بمواد أصيلة وحرفية متقنة.',
@@ -65,6 +67,7 @@ export const homeCopy = {
     empty: 'پارچەی نوێ لە ڕێگادایە. کۆکراوەکەمان ببینە یان لەگەڵ تیمەکەمان قسە بکە.',
     scrollHint: 'بڕۆ خوارەوە بۆ بینین',
     badge: 'SINCE 1978\nسلێمانی',
+    badgeLabel: 'لە ساڵی ١٩٧٨ەوە · سلێمانی',
     footer: {
       aboutTitle: 'مێژووی یۆنیک',
       aboutText: 'لە ساڵی ١٩٧٨ەوە، پێشەنگین لە دروستکردنی مۆبیلیاتی شاهانە بۆ ماڵ و ئۆفیس لە سلێمانی بە کەرەستەی بەرز و هونەری دەستی تایبەت.',

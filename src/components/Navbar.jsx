@@ -66,16 +66,16 @@ const Navbar = ({ onSearchClick }) => {
   }, []);
 
   const languageOptions = [
-    { code: 'ku', label: 'کوردی', nativeName: 'Kurdish Sorani' },
-    { code: 'ar', label: 'العربية', nativeName: 'Arabic' },
-    { code: 'en', label: 'English', nativeName: 'English' }
+    { code: 'ku', label: 'کوردی', nativeName: 'Kurdish Sorani', shortCode: 'KU' },
+    { code: 'ar', label: 'العربية', nativeName: 'Arabic', shortCode: 'AR' },
+    { code: 'en', label: 'English', nativeName: 'English', shortCode: 'EN' }
   ];
 
   const currentLangLabel = {
     ku: 'کوردی',
     ar: 'العربية',
-    en: 'EN'
-  }[lang] || 'EN';
+    en: 'English'
+  }[lang] || 'کوردی';
 
   const navLinks = [
     { href: '/', label: t.nav.home },
@@ -98,8 +98,8 @@ const Navbar = ({ onSearchClick }) => {
                   src="/brand/unique-logo-web.png"
                   alt="Unique Furniture"
                   className="header-logo-img"
-                  width="168"
-                  height="36"
+                  width="120"
+                  height="38"
                 />
               </picture>
               <picture>
@@ -158,41 +158,48 @@ const Navbar = ({ onSearchClick }) => {
             <div className="header-lang-container" ref={langDropdownRef}>
               <button
                 onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className="header-lang-trigger"
+                className={`header-lang-trigger ${langDropdownOpen ? 'is-active' : ''}`}
                 aria-expanded={langDropdownOpen}
                 aria-haspopup="true"
-                aria-label="Select Language"
+                aria-label={lang === 'ku' ? 'زمان' : lang === 'ar' ? 'اللغة' : 'Language'}
+                title={lang === 'ku' ? 'زمان / Language' : lang === 'ar' ? 'اللغة / Language' : 'Language'}
               >
-                <span>{currentLangLabel}</span>
-                <span
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    transform: langDropdownOpen ? 'rotate(180deg)' : 'rotate(0)',
-                    transition: 'transform 0.2s ease'
-                  }}
-                >
-                  <AppIcon name="chevron-down" size={14} color="var(--text-muted)" />
+                <AppIcon name="language" size={17} color="var(--brand-orange, #c86526)" />
+                <span className="header-lang-current">{currentLangLabel}</span>
+                <span className={`header-lang-arrow ${langDropdownOpen ? 'is-open' : ''}`}>
+                  <AppIcon name="chevron-down" size={12} color="currentColor" />
                 </span>
               </button>
 
               {langDropdownOpen && (
                 <div className="header-lang-dropdown">
-                  {languageOptions.map((opt) => (
-                    <button
-                      key={opt.code}
-                      onClick={() => {
-                        setLang(opt.code);
-                        setLangDropdownOpen(false);
-                      }}
-                      className={`header-lang-item ${lang === opt.code ? 'is-selected' : ''}`}
-                    >
-                      <span>{opt.label}</span>
-                      {lang === opt.code && (
-                        <AppIcon name="check" size={14} color="var(--brand-orange)" />
-                      )}
-                    </button>
-                  ))}
+                  <div className="header-lang-dropdown-head">
+                    <AppIcon name="language" size={14} color="var(--brand-orange, #c86526)" />
+                    <span>{lang === 'ku' ? 'Language · هەڵبژاردنی زمان' : lang === 'ar' ? 'Language · اختيار اللغة' : 'Select Language'}</span>
+                  </div>
+                  <div className="header-lang-list">
+                    {languageOptions.map((opt) => (
+                      <button
+                        key={opt.code}
+                        onClick={() => {
+                          setLang(opt.code);
+                          setLangDropdownOpen(false);
+                        }}
+                        className={`header-lang-item ${lang === opt.code ? 'is-selected' : ''}`}
+                      >
+                        <div className="header-lang-item-info">
+                          <div className="header-lang-item-row">
+                            <span className="header-lang-code-pill">{opt.shortCode}</span>
+                            <span className="header-lang-item-native">{opt.label}</span>
+                          </div>
+                          <span className="header-lang-item-sub">{opt.nativeName}</span>
+                        </div>
+                        {lang === opt.code && (
+                          <AppIcon name="check" size={15} color="var(--brand-orange, #c86526)" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -204,7 +211,7 @@ const Navbar = ({ onSearchClick }) => {
               aria-label="Open Navigation Menu"
               aria-expanded={mobileMenuOpen}
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+              <AppIcon name="menu" size={20} />
             </button>
           </div>
         </div>
@@ -276,7 +283,7 @@ const Navbar = ({ onSearchClick }) => {
                       onClick={() => setMobileMenuOpen(false)}
                       style={{
                         fontSize: '1.02rem',
-                        fontWeight: isActive ? 600 : 400,
+                        fontWeight: 400,
                         color: isActive ? 'var(--brand-orange)' : 'var(--text-primary)',
                         padding: '0.85rem 1rem',
                         borderRadius: 'var(--radius-sm)',
@@ -310,9 +317,12 @@ const Navbar = ({ onSearchClick }) => {
                   marginBottom: '1rem'
                 }}
               >
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>
-                  {lang === 'ku' ? 'زمان' : lang === 'ar' ? 'اللغة' : 'Language'}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '0.5rem' }}>
+                  <AppIcon name="language" size={15} color="var(--brand-orange, #c86526)" />
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 400 }}>
+                    {lang === 'ku' ? 'Language · زمان' : lang === 'ar' ? 'Language · اللغة' : 'Language'}
+                  </span>
+                </div>
                 <div
                   style={{
                     display: 'flex',
@@ -335,7 +345,7 @@ const Navbar = ({ onSearchClick }) => {
                         flex: 1,
                         minHeight: '38px',
                         fontSize: '0.85rem',
-                        fontWeight: lang === opt.code ? 600 : 400,
+                        fontWeight: 400,
                         color: lang === opt.code ? 'var(--brand-orange)' : 'var(--text-secondary)',
                         backgroundColor: lang === opt.code ? '#ffffff' : 'transparent',
                         borderRadius: '8px',
