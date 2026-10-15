@@ -107,14 +107,62 @@ const LanguageGlobeIcon = ({ size = 20, primaryColor = 'currentColor', ...props 
 );
 
 /**
+ * Iconly-styled Three Dash (Hamburger) Menu Icon
+ * Aligns precisely with Iconly Light/Curved stroke geometry (24x24, 1.65 stroke, round caps)
+ */
+const HamburgerMenuIcon = ({ size = 20, primaryColor = 'currentColor', ...props }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M3.75 7.25h16.5M3.75 12h16.5M3.75 16.75h16.5"
+      stroke={primaryColor}
+      strokeWidth="1.65"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+/**
+ * Iconly-styled Clean Close (X) Icon
+ */
+const CloseIcon = ({ size = 20, primaryColor = 'currentColor', ...props }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M18 6L6 18M6 6l12 12"
+      stroke={primaryColor}
+      strokeWidth="1.65"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+/**
  * Standardized UI Icon System using Iconly (Light / Curved style)
  */
 const ICON_MAP = {
   // General Navigation & Controls
   search: Search,
-  menu: Category,
+  menu: HamburgerMenuIcon,
+  hamburger: HamburgerMenuIcon,
+  'three-dash': HamburgerMenuIcon,
   category: Category,
-  close: CloseSquare,
+  close: CloseIcon,
+  'close-square': CloseSquare,
   home: Home,
   'chevron-down': ChevronDown,
   'chevron-left': ChevronLeft,

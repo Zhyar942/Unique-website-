@@ -28,22 +28,6 @@ export default function ShoppingHero() {
           <AppIcon name="location" size={16} />
           {copy.location}
         </Link>
-        {/* Butter-Smooth Scroll Down Indicator */}
-        <div
-          className="hero-scroll-cue hero-stagger-5"
-          onClick={() => {
-            const next = document.querySelector('.service-strip') || document.querySelector('.home-section');
-            if (next) next.scrollIntoView({ behavior: 'smooth' });
-          }}
-          role="button"
-          tabIndex={0}
-          aria-label={copy.scrollHint || 'Scroll to explore'}
-        >
-          <div className="scroll-cue-mouse">
-            <span className="scroll-cue-wheel" />
-          </div>
-          <span className="scroll-cue-text">{copy.scrollHint}</span>
-        </div>
       </div>
 
       <div className="shopping-hero-image">
