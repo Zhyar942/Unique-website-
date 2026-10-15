@@ -267,51 +267,91 @@
 }
 
 @media (max-width: 768px) {
-  /* Minimalist Compact Category Cards (Curvy, Proportional, Space-efficient) */
+  /* Apple & Samsung-style Horizontal Curvy Pill Category Chips on Mobile */
   .clean-category-track {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
     gap: 8px;
-    padding: 4px 8px 12px;
+    padding: 6px 16px 14px;
+    margin-inline: -16px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .clean-category-track::-webkit-scrollbar {
+    display: none;
   }
 
   .clean-category-card,
   .floema-card {
-    width: clamp(96px, 28vw, 114px);
-    min-height: 76px;
-    padding: 8px 6px 6px;
-    border-radius: 12px;
-    gap: 2px;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    height: 42px;
+    width: auto;
+    padding: 6px 15px;
+    border-radius: 9999px;
+    background-color: #ffffff;
+    border: 1px solid #e5e0d8;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    white-space: nowrap;
+    text-align: start;
+  }
+
+  .clean-category-card.is-active,
+  .floema-card.is-active {
+    background-color: #18181b !important;
+    border-color: #18181b !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(24, 24, 27, 0.22) !important;
   }
 
   .clean-category-icon-box {
-    width: 28px;
-    height: 24px;
-    margin-bottom: 3px;
+    width: 20px;
+    height: 20px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .clean-category-icon-box svg {
-    width: 20px !important;
-    height: 20px !important;
+    width: 17px !important;
+    height: 17px !important;
   }
 
   .clean-category-title {
-    font-size: 0.76rem;
-    line-height: 1.2;
-    margin-bottom: 2px;
-    white-space: normal;
-    text-wrap: balance;
-    max-width: 100%;
-    text-align: center;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-size: 0.85rem;
+    line-height: 1;
+    margin-bottom: 0;
+    white-space: nowrap;
+    font-weight: normal !important;
+    color: inherit;
   }
 
   .clean-category-count {
-    font-size: 0.63rem;
-    line-height: 1.1;
-    opacity: 0.85;
+    font-size: 0.74rem;
+    line-height: 1;
     white-space: nowrap;
+    margin-inline-start: 2px;
+    color: inherit;
+    font-weight: normal !important;
+  }
+
+  .clean-category-count .count-full {
+    display: none !important;
+  }
+
+  .clean-category-count .count-compact {
+    display: inline !important;
+    opacity: 0.75;
   }
 }
 
@@ -387,6 +427,12 @@
   transition: color 0.2s ease;
   white-space: nowrap;
 }
+.clean-category-count .count-full {
+  display: inline;
+}
+.clean-category-count .count-compact {
+  display: none;
+}
 
 .clean-category-card.is-active .clean-category-count,
 .floema-card.is-active .clean-category-count {
@@ -396,24 +442,35 @@
 /* ================= RESULTS TOOLBAR ================= */
 .floema-toolbar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
   margin-bottom: 24px;
 }
-.floema-toolbar-status p {
-  margin: 0;
+.floema-toolbar-main-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+.floema-toolbar-count {
   font-size: 0.93rem;
   color: #4a4744;
+}
+.floema-count-num {
+  font-weight: normal !important;
+  color: #241f21;
+}
+.floema-toolbar-sort {
+  flex-shrink: 0;
+}
+.floema-active-filters-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-}
-.floema-count-num {
-  font-weight: normal;
-  color: #241f21;
+  width: 100%;
 }
 .floema-active-chip {
   display: inline-flex;
@@ -421,10 +478,10 @@
   gap: 6px;
   background: #241f21;
   color: #ffffff;
-  padding: 3px 10px;
-  border-radius: 20px;
+  padding: 4px 12px;
+  border-radius: 9999px;
   font-size: 0.78rem;
-  font-weight: 500;
+  font-weight: normal !important;
 }
 .floema-active-chip button {
   background: none;
@@ -435,21 +492,17 @@
   line-height: 1;
   padding: 0 1px;
 }
-.floema-toolbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
 .floema-clear-btn {
   font: inherit;
-  font-size: 0.86rem;
-  padding: 7px 14px;
+  font-size: 0.82rem;
+  padding: 5px 14px;
   border: 1px solid #d8d3cb;
-  border-radius: 8px;
+  border-radius: 9999px;
   background: #ffffff;
   color: #3b3a36;
   cursor: pointer;
   transition: background-color 0.18s ease;
+  font-weight: normal !important;
 }
 .floema-clear-btn:hover {
   background: #f2efea;
@@ -462,14 +515,17 @@
   color: #686b61;
 }
 .floema-sort-select {
-  min-height: 40px;
-  padding: 6px 12px;
+  min-height: 38px;
+  padding: 6px 14px;
   background: #ffffff;
   border: 1px solid #d7d5cb;
-  border-radius: 8px;
+  border-radius: 9999px;
   color: #34382e;
-  font: inherit;
-  font-size: 0.87rem;
+  font-size: 0.86rem;
+  font-weight: normal !important;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
 }
 
 .catalogue-results-full .furniture-grid {
@@ -717,47 +773,56 @@
     white-space: nowrap;
   }
 
-  /* Polished Results Toolbar on Mobile */
+  /* Polished Results Toolbar on Mobile (Two Independent Rows: Zero Overflow) */
   .floema-toolbar {
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .floema-toolbar-main-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: nowrap;
+    width: 100%;
     gap: 8px;
-    margin-bottom: 12px;
-    padding: 4px 0;
   }
-  .floema-toolbar-status p {
-    font-size: 0.8rem;
+  .floema-toolbar-count {
+    font-size: 0.82rem;
     color: #52525b;
-    gap: 6px;
     white-space: nowrap;
   }
-  .floema-active-chip {
-    padding: 2px 8px;
-    font-size: 0.72rem;
-  }
-  .floema-toolbar-actions {
-    gap: 6px;
-    flex-shrink: 0;
-  }
-  .floema-clear-btn {
-    padding: 4px 8px;
-    font-size: 0.74rem;
-    min-height: 30px;
-    border-radius: 9999px;
-  }
   .floema-sort-select-label {
-    gap: 4px;
+    gap: 6px;
     font-size: 0.78rem;
     color: #71717a;
     white-space: nowrap;
   }
   .floema-sort-select {
-    min-height: 32px;
-    padding: 3px 8px;
-    font-size: 0.78rem;
+    min-height: 34px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
     border-radius: 9999px;
+    background-color: #ffffff;
+  }
+  .floema-active-filters-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+    padding-top: 2px;
+  }
+  .floema-active-chip {
+    padding: 3px 10px;
+    font-size: 0.74rem;
+    border-radius: 9999px;
+    font-weight: normal !important;
+  }
+  .floema-clear-btn {
+    padding: 3px 10px;
+    font-size: 0.74rem;
+    min-height: 28px;
+    border-radius: 9999px;
+    font-weight: normal !important;
   }
   .floema-cards-row {
     width: 100%;

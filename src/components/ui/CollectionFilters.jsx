@@ -185,8 +185,11 @@ export default function CollectionFilters({
               {/* Title (Normal Font) */}
               <span className="clean-category-title">{labelText}</span>
 
-              {/* Item Count (e.g. "200 Item Available" / "٨ دانە بەردەستە") */}
-              <span className="clean-category-count">{formatCount(count)}</span>
+              {/* Item Count (Responsive full on desktop, compact on mobile) */}
+              <span className="clean-category-count">
+                <span className="count-full">{formatCount(count)}</span>
+                <span className="count-compact">({count})</span>
+              </span>
             </button>
           );
         })}

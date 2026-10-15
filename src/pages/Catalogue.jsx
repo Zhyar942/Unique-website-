@@ -246,11 +246,31 @@ export default function Catalogue({ type: routeType = 'all' }) {
 
       {/* Product Results Section */}
       <section className="catalogue-results-full" aria-label="Catalog Products">
-        {/* Results Toolbar */}
+        {/* Results Toolbar with Independent Control Row & Dedicated Active Filter Chips Bar */}
         <div className="catalogue-toolbar floema-toolbar">
-          <div className="floema-toolbar-status">
-            <p role="status">
+          <div className="floema-toolbar-main-row">
+            <div className="floema-toolbar-count" role="status">
               <span className="floema-count-num">{filtered.length}</span> {text.count}
+            </div>
+
+            <div className="floema-toolbar-sort">
+              <label className="floema-sort-select-label">
+                <span>{text.sort}</span>
+                <select
+                  value={sort}
+                  onChange={(e) => updateSort(e.target.value)}
+                  className="floema-sort-select"
+                >
+                  <option value="featured">{text.featured}</option>
+                  <option value="newest">{text.newest}</option>
+                  <option value="az">{text.az}</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          {(activeCategory !== 'all' || activeSubcategory !== 'all' || sort !== 'featured') && (
+            <div className="floema-active-filters-row">
               {activeCategory !== 'all' && (
                 <span className="floema-active-chip">
                   <span>{categoryLabels[activeCategory] || activeCategory}</span>
@@ -275,11 +295,6 @@ export default function Catalogue({ type: routeType = 'all' }) {
                   </button>
                 </span>
               )}
-            </p>
-          </div>
-
-          <div className="floema-toolbar-actions">
-            {(activeCategory !== 'all' || activeSubcategory !== 'all' || sort !== 'featured') && (
               <button
                 type="button"
                 className="floema-clear-btn"
@@ -287,21 +302,8 @@ export default function Catalogue({ type: routeType = 'all' }) {
               >
                 {text.clear} ×
               </button>
-            )}
-
-            <label className="floema-sort-select-label">
-              <span>{text.sort}</span>
-              <select
-                value={sort}
-                onChange={(e) => updateSort(e.target.value)}
-                className="floema-sort-select"
-              >
-                <option value="featured">{text.featured}</option>
-                <option value="newest">{text.newest}</option>
-                <option value="az">{text.az}</option>
-              </select>
-            </label>
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Product Grid */}
