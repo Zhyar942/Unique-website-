@@ -607,7 +607,7 @@
   font-weight: normal !important;
   letter-spacing: 0.12em;
   padding: 3.5px 10px;
-  border-radius: 9999px;
+  border-radius: 8px;
   text-transform: uppercase;
 }
 
@@ -1223,17 +1223,17 @@
   .section-heading > p { font-size: 0.86rem; }
   .refined-home h2 { font-size: 1.75rem; }
   .section-kicker { font-size: 0.7rem; margin-bottom: 8px; }
-  /* Room Navigation: Curated single-line curvy pill carousel (No 2-line wraps) */
+  /* Room Navigation: Same style as web view (connected segmented curved rectangle), horizontally scrollable with compact sizing */
   .room-nav {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    gap: 10px;
-    padding: 6px 16px 14px;
-    margin-inline: -16px;
-    border: none;
-    border-radius: 0;
+    border: 1px solid #e5e0d8;
+    border-radius: 12px;
+    background: #f6f3ee;
+    padding: 0;
+    margin-inline: 0;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
@@ -1243,52 +1243,51 @@
   }
   .room-link {
     flex: 0 0 auto;
+    min-width: 96px;
     scroll-snap-align: start;
-    display: inline-flex;
-    flex-direction: row;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 9px;
-    padding: 10px 18px;
-    min-height: 46px;
-    background: #f6f3ee;
-    border: 1px solid #e5e0d8;
-    border-radius: 9999px;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 10px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
     text-decoration: none;
     white-space: nowrap;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-    grid-column: auto;
-    transition: background-color 0.2s ease, transform 0.15s ease;
+    box-shadow: none;
+    transition: background-color 0.2s ease;
   }
   .room-link + .room-link {
     border-inline-start: 1px solid #e5e0d8;
   }
   .room-link:nth-child(4), .room-link:nth-child(5) {
-    grid-column: auto;
-    border-top: 1px solid #e5e0d8;
+    border-top: none;
   }
   .room-link > svg:first-child,
   .room-link .room-icon {
-    width: 20px !important;
-    height: 20px !important;
+    width: 22px !important;
+    height: 22px !important;
     flex-shrink: 0;
   }
   .room-link span {
-    font-size: 0.88rem;
-    line-height: 1;
+    font-size: 0.78rem;
+    line-height: 1.2;
     white-space: nowrap;
     font-weight: normal !important;
+    text-align: center;
   }
   .room-link > .app-icon {
     display: none;
   }
   .room-link:active {
-    transform: scale(0.97);
-    background: #ede7dd;
+    background-color: #ede7dd;
   }
 
   .collection-toolbar { flex-wrap: wrap; gap: 12px; }
-  .collection-filters { width: 100%; }
-  .collection-filters button { flex: 1; font-size: 0.8rem; padding-inline: 9px; }
+  .collection-filters { width: 100%; border-radius: 12px; }
+  .collection-filters button { flex: 1; font-size: 0.8rem; padding-inline: 9px; border-radius: 10px; }
   .collection-toolbar > p { font-size: 0.76rem; }
   .home-product-grid { gap: 22px 14px; }
   .app-wrapper .furniture-card-title { font-size: 0.9rem; }
@@ -1313,7 +1312,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 9999px;
+    border-radius: 12px;
     font-size: 0.92rem;
     font-weight: normal !important;
     padding: 12px 20px;
@@ -1323,6 +1322,7 @@
     background: #ffffff;
     border: 1px solid #e0dbd1;
     color: #18181b;
+    border-radius: 12px;
   }
   .site-footer {
     padding-bottom: calc(88px + env(safe-area-inset-bottom, 24px));
@@ -1342,7 +1342,7 @@
   }
   .heritage-badge-pill {
     font-weight: normal !important;
-    border-radius: 9999px;
+    border-radius: 8px;
     padding: 4px 12px;
   }
   .heritage-motto {
@@ -1359,7 +1359,7 @@
     padding: 8px 16px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 9999px;
+    border-radius: 10px;
     font-size: 0.82rem;
     font-weight: normal !important;
   }
@@ -1381,7 +1381,7 @@
     width: 100%;
   }
   .footer-action-card {
-    border-radius: 9999px !important;
+    border-radius: 12px !important;
     padding: 10px 16px !important;
   }
   .footer-bottom-wrap {
@@ -1396,6 +1396,10 @@
   .footer-languages {
     width: 100%;
     justify-content: center;
+    border-radius: 10px;
+  }
+  .footer-lang-btn {
+    border-radius: 8px;
   }
   .is-rtl .refined-home .shopping-hero-copy { border-radius: 12px; }
   .is-rtl .refined-home .shopping-hero h1 { font-size: clamp(1.7rem, 5.2vw, 2.15rem); line-height: 1.25; }
