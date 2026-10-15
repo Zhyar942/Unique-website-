@@ -193,8 +193,8 @@ const ProductDetail = ({ slug }) => {
                       top: '50%',
                       left: '12px',
                       transform: 'translateY(-50%)',
-                      width: '42px',
-                      height: '42px',
+                      width: 'clamp(34px, 8vw, 42px)',
+                      height: 'clamp(34px, 8vw, 42px)',
                       borderRadius: '50%',
                       backgroundColor: 'rgba(255, 255, 255, 0.88)',
                       color: 'var(--text-primary)',
@@ -232,8 +232,8 @@ const ProductDetail = ({ slug }) => {
                       top: '50%',
                       right: '12px',
                       transform: 'translateY(-50%)',
-                      width: '42px',
-                      height: '42px',
+                      width: 'clamp(34px, 8vw, 42px)',
+                      height: 'clamp(34px, 8vw, 42px)',
                       borderRadius: '50%',
                       backgroundColor: 'rgba(255, 255, 255, 0.88)',
                       color: 'var(--text-primary)',
@@ -340,7 +340,7 @@ const ProductDetail = ({ slug }) => {
               <span
                 style={{
                   fontSize: '0.8rem',
-                  fontWeight: 600,
+                  fontWeight: 400,
                   color: 'var(--accent-earth)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.5px',
@@ -351,24 +351,25 @@ const ProductDetail = ({ slug }) => {
 
               <button
                 onClick={handleShare}
-                aria-label="Share"
+                aria-label={lang === 'ku' ? 'هاوبەشکردن' : lang === 'ar' ? 'مشاركة' : 'Share'}
                 className="btn btn-secondary"
                 style={{
                   minHeight: '34px',
                   padding: '4px 10px',
                   fontSize: '0.8rem',
-                  borderRadius: 'var(--radius-sm)'
+                  borderRadius: 'var(--radius-sm)',
+                  fontWeight: 400
                 }}
               >
                 <AppIcon name="share" size={14} />
-                <span>Share</span>
+                <span>{lang === 'ku' ? 'هاوبەشکردن' : lang === 'ar' ? 'مشاركة' : 'Share'}</span>
               </button>
             </div>
 
             <h1
               style={{
                 fontSize: 'clamp(1.65rem, 3.2vw, 2.5rem)',
-                fontWeight: 800,
+                fontWeight: 400,
                 color: 'var(--text-primary)',
                 marginBottom: '0.6rem',
                 lineHeight: 1.2,
@@ -391,7 +392,7 @@ const ProductDetail = ({ slug }) => {
             {/* Finish Swatches */}
             {product.swatches && product.swatches.length > 0 && (
               <div style={{ marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: '0.5rem' }}>
+                <span style={{ fontSize: '0.84rem', fontWeight: 400, color: 'var(--text-primary)', display: 'block', marginBottom: '0.5rem' }}>
                   {t.productCard.swatches}
                 </span>
                 <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -431,7 +432,7 @@ const ProductDetail = ({ slug }) => {
                 gap: '0.85rem',
               }}
             >
-              <h4 style={{ fontSize: '0.94rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+              <h4 style={{ fontSize: '0.94rem', fontWeight: 400, margin: 0, color: 'var(--text-primary)' }}>
                 {t.productDetail.specsTitle}
               </h4>
               {specs.dimensions && (
@@ -466,7 +467,7 @@ const ProductDetail = ({ slug }) => {
                 style={{
                   minHeight: '48px',
                   fontSize: '0.96rem',
-                  fontWeight: 600,
+                  fontWeight: 400,
                   width: '100%',
                 }}
               >
@@ -500,7 +501,7 @@ const ProductDetail = ({ slug }) => {
         {/* Related Furniture */}
         {relatedProducts.length > 0 && (
           <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '3.5rem' }}>
-            <h2 style={{ fontSize: 'clamp(1.4rem, 2.5vw, 1.8rem)', fontWeight: 800, marginBottom: '1.75rem' }}>
+            <h2 style={{ fontSize: 'clamp(1.4rem, 2.5vw, 1.8rem)', fontWeight: 400, marginBottom: '1.75rem' }}>
               {t.productDetail.relatedTitle}
             </h2>
             <div className="furniture-grid">

@@ -165,7 +165,10 @@ const Navbar = ({ onSearchClick }) => {
                 title={lang === 'ku' ? 'زمان / Language' : lang === 'ar' ? 'اللغة / Language' : 'Language'}
               >
                 <AppIcon name="language" size={17} color="var(--brand-orange, #c86526)" />
-                <span className="header-lang-current">{currentLangLabel}</span>
+                <span className="header-lang-current">
+                  <span className="lang-full-label">{currentLangLabel}</span>
+                  <span className="lang-short-code">{languageOptions.find((o) => o.code === lang)?.shortCode}</span>
+                </span>
                 <span className={`header-lang-arrow ${langDropdownOpen ? 'is-open' : ''}`}>
                   <AppIcon name="chevron-down" size={12} color="currentColor" />
                 </span>
@@ -380,11 +383,16 @@ const Navbar = ({ onSearchClick }) => {
                     minHeight: '46px',
                     justifyContent: 'center',
                     gap: '0.55rem',
-                    fontSize: '0.9rem'
+                    fontSize: '0.9rem',
+                    paddingInline: '12px'
                   }}
                 >
                   <AppIcon name="call" size={17} />
-                  <span>{t.nav.callUs || 'Call'} · {info.phoneDisplay}</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
+                    <span>{t.nav.callUs || 'Call'}</span>
+                    <span style={{ opacity: 0.5 }}>·</span>
+                    <span style={{ direction: 'ltr', unicodeBidi: 'embed' }}>{info.phoneDisplay}</span>
+                  </span>
                 </a>
 
                 {/* WhatsApp & Instagram Dual Buttons */}

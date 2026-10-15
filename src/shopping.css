@@ -213,20 +213,30 @@
 .floema-cards-row {
   display: flex;
   align-items: stretch;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 14px;
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  padding: 8px 4px 18px;
+  padding: 8px 16px 18px;
+  scroll-snap-type: x mandatory;
+}
+@media (min-width: 1200px) {
+  .clean-category-track,
+  .floema-cards-row {
+    justify-content: center;
+    padding-inline: 4px;
+  }
 }
 .clean-category-track::-webkit-scrollbar,
 .floema-cards-row::-webkit-scrollbar {
   display: none;
 }
 
-/* The Category Card (Matches Uploaded Screenshot) */
+/* The Category Card (Matches Uploaded Reference) */
 .clean-category-card,
 .floema-card {
   flex: 0 0 auto;
@@ -242,6 +252,7 @@
   cursor: pointer;
   user-select: none;
   outline: none !important;
+  scroll-snap-align: start;
   transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
               background-color 0.2s ease,
@@ -253,6 +264,21 @@
   border: 1px solid #e8e4dc;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
   color: #18181b;
+}
+
+@media (max-width: 768px) {
+  .clean-category-card,
+  .floema-card {
+    width: clamp(124px, 32vw, 138px);
+    min-height: 114px;
+    padding: 14px 10px 12px;
+  }
+  .clean-category-title {
+    font-size: 0.92rem;
+  }
+  .clean-category-count {
+    font-size: 0.72rem;
+  }
 }
 
 .clean-category-card:hover,
@@ -592,31 +618,46 @@
   .discovery-search { width: 100%; min-height: 44px; }
   .discovery-links { gap: 22px; padding-block: 6px; }
   .discovery-links a { font-size: .87rem; }
-  .shopping-hero { display: flex; flex-direction: column; gap: 22px; padding-block: 18px 32px; }
-  .shopping-hero-image { order: -1; min-height: 0; height: 285px; width: 100%; }
+  .shopping-hero { display: flex; flex-direction: column; gap: 20px; padding-block: 14px 28px; }
+  .shopping-hero-image { order: 0; min-height: 0; height: 260px; width: 100%; border-radius: 14px; overflow: hidden; }
   .shopping-hero-copy { padding: 0; width: 100%; }
-  .shopping-hero h1 { font-size: 2.3rem; line-height: 1.2; margin-bottom: 14px; }
-  .hero-eyebrow { margin-bottom: 12px; font-size: .74rem; }
-  .shopping-hero-copy > p { font-size: 1rem; margin: 0; }
-  .shopping-hero-actions { margin-top: 20px; gap: 18px; }
-  .hero-showroom-link { margin-top: 12px; }
+  .shopping-hero h1 { font-size: 2.15rem; line-height: 1.22; margin-bottom: 12px; }
+  .hero-eyebrow { margin-bottom: 10px; font-size: .74rem; }
+  .shopping-hero-copy > p { font-size: 0.98rem; margin: 0; line-height: 1.6; }
+  .shopping-hero-actions { margin-top: 18px; gap: 12px; flex-wrap: wrap; }
+  .hero-showroom-link { margin-top: 8px; }
   .hero-image-caption { bottom: 12px; inset-inline: 12px; padding: 7px 13px; }
+  .hero-scroll-cue { display: none; }
   
-  .floema-page-header { padding-block: 16px 28px; }
-  .floema-page-headline { font-size: 1.85rem; line-height: 1.25; }
-  .floema-filter-root { gap: 20px; }
+  .floema-page-header { padding-block: 14px 24px; }
+  .floema-page-headline { font-size: 1.75rem; line-height: 1.25; }
+  .floema-filter-root { gap: 16px; }
   .floema-cards-row {
     width: 100%;
-    scroll-snap-type: x proximity;
-    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 10px;
   }
   .floema-card { scroll-snap-align: start; }
-  .catalogue-results-full .furniture-grid { grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 18px; }
   
-  .furniture-card .furniture-card-info { padding: 12px; gap: 7px; }
-  .furniture-card-title { font-size: .97rem; }
-  .furniture-card-category { font-size: .73rem; }
-  .catalogue-help { padding: 22px; }
+  /* Modern Responsive 2-Column Mobile Furniture Grid */
+  .catalogue-results-full .furniture-grid,
+  .furniture-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+  
+  .furniture-card .furniture-card-info { padding: 10px 4px 6px; gap: 5px; }
+  .furniture-card-title { font-size: 0.9rem; line-height: 1.38; }
+  .furniture-card-category { font-size: 0.7rem; }
+  .catalogue-help { padding: 20px 16px; }
+}
+
+@media (max-width: 340px) {
+  .catalogue-results-full .furniture-grid,
+  .furniture-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
 }
 
 /* ========================================================

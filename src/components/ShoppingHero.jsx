@@ -20,8 +20,8 @@ export default function ShoppingHero() {
             {copy.explore}
             <AppIcon name={isRtl ? 'arrow-left' : 'arrow-right'} size={17} />
           </Link>
-          <Link href="/products?collection=Details" className="hero-office-link">
-            {t.catalogFilter?.collections?.Details || 'Details Collection'}
+          <Link href="/products?department=office" className="hero-office-link">
+            {copy.office || (lang === 'ku' ? 'بۆ شوێنی کارت' : lang === 'ar' ? 'لمساحة عملك' : 'For your workspace')}
           </Link>
         </div>
         <Link href="/contact" className="hero-location hero-stagger-5">

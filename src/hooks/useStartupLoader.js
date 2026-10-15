@@ -53,19 +53,21 @@ export default function useStartupLoader() {
         return;
       }
 
+      const isMobile = window.innerWidth < 768;
+
       // Phase 1: Unified logo presentation pause
-      await wait(750);
+      await wait(isMobile ? 260 : 750);
       if (!active) return;
 
       // Phase 2: Silky accordion fold into the 'U' emblem
       loader.classList.add('is-packing');
-      await wait(820);
+      await wait(isMobile ? 320 : 820);
       if (!active) return;
 
-      // Concurrently wait for background asset preloading, capped at 1200ms
+      // Concurrently wait for background asset preloading, capped at 1200ms (or 400ms on mobile)
       await Promise.race([
         resourcesPromise,
-        wait(1200),
+        wait(isMobile ? 400 : 1200),
       ]);
       if (!active) return;
 
@@ -74,7 +76,7 @@ export default function useStartupLoader() {
       const destination = [...document.querySelectorAll('.header-logo-img, .header-symbol-img')]
         .find((image) => image.getBoundingClientRect().width > 0);
 
-      const flightDuration = 1150;
+      const flightDuration = isMobile ? 620 : 1150;
 
       if (logo && destination && logo.animate) {
         const start = logo.getBoundingClientRect();
@@ -89,12 +91,12 @@ export default function useStartupLoader() {
         loader.classList.add('is-docking');
         document.body.classList.replace('is-loading', 'is-docking');
 
-        // Phase 4: Trigger text emergence as 'U' nears top dock (at 700ms into 1150ms flight)
+        // Phase 4: Trigger text emergence as 'U' nears top dock
         timers.push(setTimeout(() => {
           if (active && loader) {
             loader.classList.add('is-settling');
           }
-        }, 700));
+        }, isMobile ? 350 : 700));
 
         // Luxurious, butter-smooth flight of the 'U' to the header
         dockingAnimation = logo.animate([
@@ -119,10 +121,10 @@ export default function useStartupLoader() {
 
       if (dockingAnimation) {
         await dockingAnimation.finished.catch(() => {});
-        // After flight finishes, allow 360ms for the final letters to reach resting dock
-        await wait(360);
+        // After flight finishes, brief settle
+        await wait(isMobile ? 160 : 360);
       } else {
-        await wait(400);
+        await wait(isMobile ? 200 : 400);
       }
 
       if (!active) return;
@@ -130,7 +132,7 @@ export default function useStartupLoader() {
       loader.classList.add('is-leaving');
       document.body.classList.add('is-leaving');
       document.body.classList.remove('is-docking');
-      await wait(380);
+      await wait(isMobile ? 200 : 380);
 
       if (!active) return;
       loader.remove();

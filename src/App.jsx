@@ -18,6 +18,7 @@ import DesignSystemShowcase from './pages/DesignSystemShowcase';
 
 import SearchModal from './components/SearchModal';
 import Footer from './components/Footer';
+import MobileBottomBar from './components/MobileBottomBar';
 import useStartupLoader from './hooks/useStartupLoader';
 
 import PageTransition from './components/ui/PageTransition';
@@ -73,6 +74,9 @@ const AppContent = () => {
 
       {/* Shared Responsive Showroom Footer */}
       <Footer />
+
+      {/* Native Mobile Bottom Navigation Bar */}
+      <MobileBottomBar onSearchClick={() => setIsSearchOpen(true)} />
 
       {/* Trilingual Search Modal */}
       <SearchModal

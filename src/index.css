@@ -1114,6 +1114,30 @@ html[dir="rtl"] .link-hover-arrow:hover .app-icon {
   line-height: 1;
 }
 
+.lang-short-code {
+  display: none;
+}
+
+@media (max-width: 540px) {
+  .lang-full-label {
+    display: none;
+  }
+  .lang-short-code {
+    display: inline-block;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+  }
+  .header-lang-trigger {
+    padding: 0 9px;
+    gap: 4px;
+    height: 36px;
+    min-height: 36px;
+  }
+  .header-lang-arrow {
+    display: none;
+  }
+}
+
 .header-lang-arrow {
   display: inline-flex;
   align-items: center;
@@ -1353,7 +1377,7 @@ html[dir="rtl"] .link-hover-arrow:hover .app-icon {
   position: fixed;
   top: 0;
   bottom: 0;
-  width: min(84vw, 360px);
+  width: min(88vw, 380px);
   height: 100dvh;
   background-color: #ffffff;
   z-index: 300;
@@ -1419,6 +1443,99 @@ html[dir="rtl"] .link-hover-arrow:hover .app-icon {
     display: flex;
     align-items: center;
     gap: 0.65rem;
+  }
+}
+
+/* ==========================================================================
+   NATIVE MOBILE BOTTOM BAR (Thumb-reach Navigation)
+   ========================================================================== */
+.mobile-bottom-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-bar {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 135;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-top: 1px solid rgba(226, 221, 213, 0.85);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+    padding: 6px 6px max(6px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .mobile-bottom-bar-inner {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .mobile-bottom-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 2px;
+    min-height: 48px;
+    border: none;
+    background: transparent;
+    color: #6d675e;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 400 !important;
+    line-height: 1.2;
+    transition: color 0.18s ease, transform 0.15s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-bottom-btn:active {
+    transform: scale(0.94);
+  }
+
+  .mobile-bottom-btn.is-active {
+    color: var(--brand-orange, #c86526);
+  }
+
+  .mobile-bottom-icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 24px;
+  }
+
+  .mobile-bottom-active-dot {
+    position: absolute;
+    bottom: -3px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: var(--brand-orange, #c86526);
+  }
+
+  .mobile-bottom-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    font-weight: 400 !important;
+  }
+
+  /* Add bottom gutter to wrapper on mobile so bottom bar does not block content */
+  .app-wrapper {
+    padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px));
   }
 }
 
