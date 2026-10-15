@@ -441,7 +441,7 @@
 .room-nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid #e5e0d8; border-radius: 12px; overflow: hidden; }
 .room-link { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; padding: 23px 10px 19px; color: #5f594f; min-width: 0; position: relative; background: #f6f3ee; text-decoration: none; transition: background-color .22s ease, color .22s ease, transform var(--duration-press) var(--ease-natural); }
 .room-link + .room-link { border-inline-start: 1px solid #e5e0d8; }
-.room-link span { font-size: .82rem; text-align: center; font-weight: 500; color: inherit; }
+.room-link span { font-size: .82rem; text-align: center; font-weight: normal !important; color: inherit; }
 .room-link > svg,
 .room-link .room-icon { color: inherit; transition: transform 0.2s ease; }
 .room-link > .app-icon { position: absolute; top: 12px; inset-inline-end: 12px; opacity: 0; transition: opacity .22s var(--ease-natural), transform .22s var(--ease-out-expo); transform: scale(0.9); }
@@ -1223,12 +1223,13 @@
   .section-heading > p { font-size: 0.86rem; }
   .refined-home h2 { font-size: 1.75rem; }
   .section-kicker { font-size: 0.7rem; margin-bottom: 8px; }
-  .room-nav { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .room-link { grid-column: span 2; padding: 17px 8px; gap: 9px; }
+  .room-nav { grid-template-columns: repeat(6, minmax(0, 1fr)); border-radius: 12px; }
+  .room-link { grid-column: span 2; padding: 10px 4px 8px; gap: 4px; min-height: 60px; }
   .room-link:nth-child(4), .room-link:nth-child(5) { grid-column: span 3; border-top: 1px solid #e5e0d8; }
   .room-link:nth-child(4) { border-inline-start: 0; }
-  .room-link > svg:first-child { width: 45px; height: 45px; }
-  .room-link span { font-size: 0.76rem; }
+  .room-link > svg:first-child,
+  .room-link .room-icon { width: 24px !important; height: 24px !important; }
+  .room-link span { font-size: 0.72rem; line-height: 1.25; font-weight: normal !important; }
   .collection-toolbar { flex-wrap: wrap; gap: 12px; }
   .collection-filters { width: 100%; }
   .collection-filters button { flex: 1; font-size: 0.8rem; padding-inline: 9px; }
