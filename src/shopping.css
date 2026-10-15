@@ -267,17 +267,51 @@
 }
 
 @media (max-width: 768px) {
+  /* Minimalist Compact Category Cards (Curvy, Proportional, Space-efficient) */
+  .clean-category-track {
+    gap: 8px;
+    padding: 4px 8px 12px;
+  }
+
   .clean-category-card,
   .floema-card {
-    width: clamp(124px, 32vw, 138px);
-    min-height: 114px;
-    padding: 14px 10px 12px;
+    width: clamp(96px, 28vw, 114px);
+    min-height: 76px;
+    padding: 8px 6px 6px;
+    border-radius: 12px;
+    gap: 2px;
   }
+
+  .clean-category-icon-box {
+    width: 28px;
+    height: 24px;
+    margin-bottom: 3px;
+  }
+
+  .clean-category-icon-box svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
   .clean-category-title {
-    font-size: 0.92rem;
+    font-size: 0.76rem;
+    line-height: 1.2;
+    margin-bottom: 2px;
+    white-space: normal;
+    text-wrap: balance;
+    max-width: 100%;
+    text-align: center;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
+
   .clean-category-count {
-    font-size: 0.72rem;
+    font-size: 0.63rem;
+    line-height: 1.1;
+    opacity: 0.85;
+    white-space: nowrap;
   }
 }
 
@@ -629,13 +663,106 @@
   .hero-image-caption { bottom: 12px; inset-inline: 12px; padding: 7px 13px; }
   .hero-scroll-cue { display: none; }
   
-  .floema-page-header { padding-block: 14px 24px; }
-  .floema-page-headline { font-size: 1.75rem; line-height: 1.25; }
-  .floema-filter-root { gap: 16px; }
+  /* Compact & Balanced Catalogue Header */
+  .catalogue-page.floema-catalog-page {
+    padding-block: 8px 36px;
+  }
+  .catalogue-breadcrumb {
+    margin-bottom: 4px;
+    padding-top: 4px;
+    font-size: 0.8rem;
+  }
+  .floema-page-header {
+    padding-block: 6px 12px;
+  }
+  .floema-page-headline {
+    font-size: clamp(1.15rem, 4.4vw, 1.38rem);
+    line-height: 1.3;
+    gap: 0;
+    margin-bottom: 4px;
+  }
+  .floema-headline-sentence {
+    display: inline;
+  }
+  .floema-headline-sub {
+    display: inline;
+    margin-inline-start: 4px;
+  }
+  .floema-filter-wrapper {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+  }
+  .category-filter-wrapper {
+    margin: 2px 0 10px;
+    gap: 10px;
+  }
+  .category-filter-heading {
+    font-size: 0.82rem;
+    color: #71717a;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0;
+  }
+
+  /* Single-line Curvy Space Selector (No 2-line wraps) */
+  .category-space-selector {
+    gap: 3px;
+    padding: 3px;
+    max-width: 100%;
+  }
+  .category-space-btn {
+    padding: 6px 11px;
+    font-size: 0.78rem;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  /* Polished Results Toolbar on Mobile */
+  .floema-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 4px 0;
+  }
+  .floema-toolbar-status p {
+    font-size: 0.8rem;
+    color: #52525b;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .floema-active-chip {
+    padding: 2px 8px;
+    font-size: 0.72rem;
+  }
+  .floema-toolbar-actions {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .floema-clear-btn {
+    padding: 4px 8px;
+    font-size: 0.74rem;
+    min-height: 30px;
+    border-radius: 9999px;
+  }
+  .floema-sort-select-label {
+    gap: 4px;
+    font-size: 0.78rem;
+    color: #71717a;
+    white-space: nowrap;
+  }
+  .floema-sort-select {
+    min-height: 32px;
+    padding: 3px 8px;
+    font-size: 0.78rem;
+    border-radius: 9999px;
+  }
   .floema-cards-row {
     width: 100%;
     scroll-snap-type: x mandatory;
-    padding-bottom: 10px;
+    padding-bottom: 8px;
   }
   .floema-card { scroll-snap-align: start; }
   
