@@ -1069,7 +1069,7 @@ html[dir="rtl"] .link-hover-arrow:hover .app-icon {
   height: 38px;
   min-height: 38px;
   padding: 0 14px 0 12px;
-  border-radius: 9999px;
+  border-radius: 10px;
   border: 1px solid #e2ddd5;
   background-color: #ffffff;
   color: #1c1917;
@@ -1088,15 +1088,15 @@ html[dir="rtl"] .link-hover-arrow:hover .app-icon {
 }
 
 .header-lang-trigger:hover {
-  background-color: #faf7f2;
-  border-color: var(--brand-orange, #c86526);
-  box-shadow: 0 3px 10px rgba(200, 101, 38, 0.1);
+  background-color: #f6f3ee;
+  border-color: #d0c9bf;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 
 .header-lang-trigger.is-active {
-  border-color: var(--brand-orange, #c86526);
-  background-color: #faf7f2;
+  border-color: #d0c9bf;
+  background-color: #f6f3ee;
 }
 
 .header-lang-trigger:active {
@@ -1104,7 +1104,7 @@ html[dir="rtl"] .link-hover-arrow:hover .app-icon {
 }
 
 .header-lang-trigger:focus-visible {
-  outline: 2px solid var(--brand-orange, #c86526);
+  outline: 2px solid #d0c9bf;
   outline-offset: 2px;
 }
 
@@ -1464,7 +1464,7 @@ html[dir="rtl"] .link-hover-arrow:hover .app-icon {
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(226, 221, 213, 0.92);
-    border-radius: 9999px;
+    border-radius: 16px;
     box-shadow: 0 10px 32px -4px rgba(24, 24, 27, 0.12),
                 0 3px 10px rgba(0, 0, 0, 0.04),
                 inset 0 1px 1px rgba(255, 255, 255, 0.9);
@@ -1490,7 +1490,7 @@ html[dir="rtl"] .link-hover-arrow:hover .app-icon {
     padding: 6px 2px 5px;
     min-height: 48px;
     border: none;
-    border-radius: 9999px;
+    border-radius: 10px;
     background: transparent;
     color: #6d675e;
     text-decoration: none;
